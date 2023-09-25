@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     #region 변수
     [Header("=====> 플레이어 속도 정보 기본값 : 3 <=====")]
-    [SerializeField] private float PlayerMaxSpeed = 3;
-    [SerializeField] private float PlayerMinSpeed = 3;
+    [SerializeField] private float PlayerSpeed = 3;
     [SerializeField] private float PlayerJumpPower = 3;
 
     private Rigidbody2D Rigid2D;
@@ -35,9 +35,6 @@ public class PlayerMovement : MonoBehaviour
         // 좌우 이동 애니메이션
         PlayerXYAnimation();
 
-        // 이동 멈춤
-        PlayerMoveStop();
-
         // 점프
         Jump();
     }
@@ -55,29 +52,8 @@ public class PlayerMovement : MonoBehaviour
     /** 플레이어가 움직인다 */
     private void PlayerMove()
     {
-        float X = Input.GetAxisRaw("Horizontal");
-        Rigid2D.AddForce(Vector2.right * PlayerMinSpeed * X, ForceMode2D.Impulse);
-
-        // 최대 속도를 제한한다
-        if (Rigid2D.velocity.x > PlayerMaxSpeed)
-        {
-            Rigid2D.velocity = new Vector2(PlayerMaxSpeed, Rigid2D.velocity.y);
-        }
-        else if (Rigid2D.velocity.x < PlayerMaxSpeed * -1)
-        {
-            Rigid2D.velocity = new Vector2(PlayerMaxSpeed * -1, Rigid2D.velocity.y);
-        }
-    }
-
-    /** 플레이어 움직임을 멈춘다 */
-    private void PlayerMoveStop()
-    {
-        // 버튼에서 손을 땠을경우
-        if (Input.GetButtonUp("Horizontal"))
-        {
-            Rigid2D.velocity = new Vector2(0.5f * Rigid2D.velocity.normalized.x, Rigid2D.velocity.y);
-        }
-
+        float DirectX = Input.GetAxisRaw("Horizontal");
+        Rigid2D.velocity = new Vector2(DirectX * PlayerSpeed, Rigid2D.velocity.y);
     }
 
     /** 플레이어가 점프를 한다 */
@@ -85,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.C) && JumpCount < 2)
         {
-            Rigid2D.AddForce(Vector2.up * PlayerJumpPower, ForceMode2D.Impulse);
+            Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
             JumpCount++;
             PlayerAnimator.SetBool("IsJumping", true);
         }
