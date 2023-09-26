@@ -42,8 +42,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackgroundObject
+    uniqueID: 1153848859
+    locked: 0
   - name: Background
     uniqueID: 2087067243
+    locked: 0
+  - name: MainStage
+    uniqueID: 1200054799
+    locked: 0
+  - name: OutLine
+    uniqueID: 3203105721
     locked: 0
   - name: Player
     uniqueID: 2715642031
