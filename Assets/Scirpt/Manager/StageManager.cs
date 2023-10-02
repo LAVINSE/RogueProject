@@ -13,12 +13,14 @@ public class StageManager : MonoBehaviour
 
     #region 프로퍼티
     public ObjectPoolManager PoolManager { get; private set; }
+    public static StageManager Instance { get; private set; }
     #endregion // 프로퍼티
 
     #region 함수
     /** 초기화 */
     private void Awake()
     {
+        Instance = this;
         Player.transform.position = PlayerSpawnPoint.transform.position;
         OutLineTileMap.enabled = false;
         PoolManager = CFactory.CreateObject<ObjectPoolManager>("ObjectPoolManager", this.gameObject,
