@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemySetting : MonoBehaviour
 {
     #region 변수
-    [SerializeField] private string EnemyName = string.Empty;
+    [SerializeField] private EnemyTable.EnemyType oEnemyType;
     [SerializeField] private float EnemyHp = 0.0f;
     [SerializeField] private float EnemyAtk = 0.0f;
 
@@ -17,7 +17,7 @@ public class EnemySetting : MonoBehaviour
     public void EnemyInfoSetting(EnemyTable EnemyScriptTable)
     {
         this.oEnemyTable = EnemyScriptTable;
-        this.EnemyName = this.oEnemyTable.EnemyName;
+        this.oEnemyType = this.oEnemyTable.oEnemyType;
         this.EnemyHp = this.oEnemyTable.EnemyHp;
         this.EnemyAtk = this.oEnemyTable.EnemyAtk;
     }
