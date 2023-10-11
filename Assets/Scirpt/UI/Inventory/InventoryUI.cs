@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -17,9 +21,113 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject SlotPrefab; // 슬롯 원본 객체
 
     private List<ItemSlotUI> ItemSlotUIList = new List<ItemSlotUI>();
+
+    private GraphicRaycaster GrRayCaster; // 캔버스에서 레이캐스트 작업할때 사용하는 변수
+    private PointerEventData EventData; // 포인트 관련 데이터를 얻기위한 변수
+    private List<RaycastResult> RayCastResult; // 레이캐스트 결과값을 저장하는 리스트
+
+    private ItemSlotUI BeginDragSlot; // 현재 드래그를 시작한 슬롯
+    private Transform BeginDragIconTransform; // 해당 슬롯의 아이콘 Transform
+
+    private Vector3 BeginDragIconPoint; // 드래그 시작 시 슬롯의 위치
+    private Vector3 BeginDragCursorPoint; // 드래그 시작 시 커서의 위치
+    private int BeginDragSlotSiblingIndex;
     #endregion // 변수
 
     #region 함수
+    /** 초기화 => 상태를 갱신한다 */
+    private void Update()
+    {
+        EventData.position = Input.mousePosition; // 포인트 위치를 마우스 위치로 설정
+
+
+    }
+
+    /** 레이케스트 결과값 리스트에서 첫번째 컴포넌트를 가져온다 */
+    private T RaycastAndGetFirstComponent<T>() where T : Component
+    {
+        RayCastResult.Clear(); // 초기화
+        GrRayCaster.Raycast(EventData, RayCastResult);
+
+        // 레이케스트 결과값 리스트가 없을 경우
+        if(RayCastResult.Count == 0)
+        {
+            return null;
+        }
+
+        return RayCastResult[0].gameObject.GetComponent<T>();
+    }
+
+    /** 인벤토리에서 클릭을 한다 */
+    private void OnPointerDown()
+    {
+        // 왼쪽 클릭을 했을 경우
+        if(Input.GetMouseButtonDown(0))
+        {
+            BeginDragSlot = RaycastAndGetFirstComponent<ItemSlotUI>(); // 클릭한 슬롯의 컴포넌트를 가져온다
+
+            // 아이템을 갖고 있는 슬롯일 경우
+            if(BeginDragSlot != null && BeginDragSlot.HasItem)
+            {
+                // 위치 기억
+                BeginDragIconTransform = BeginDragSlot.oIconRect.transform; // 해당 슬롯의 아이콘 위치 저장
+                BeginDragIconPoint = BeginDragIconTransform.position; // 슬롯의 위치 저장
+                BeginDragCursorPoint = Input.mousePosition; //  마우스 커서 위치 저장
+
+                // 맨 위에 보이게 설정
+                BeginDragSlotSiblingIndex = BeginDragSlot.transform.GetSiblingIndex(); // 해당 오브젝트의 순위를 가져온다
+                BeginDragSlot.transform.SetAsLastSibling(); // 가장 나중에 출력 > 맨 앞으로 나오게설정
+
+                // 해당 슬롯의 하이라이트 이미지를 아이콘보다 뒤에 위치
+                BeginDragSlot.SetHighlightOnTop();
+            }
+            else
+            {
+                BeginDragSlot = null;
+            }
+        }
+    }
+
+    /** 인벤토리에서 클릭을 뗄 경우 */
+    private void OnPointerUp()
+    {
+        // 왼쪽을 클릭을 뗄 경우
+        if(Input.GetMouseButtonUp(0))
+        {
+            // 슬롯이 있을 경우
+            if (BeginDragSlot != null)
+            {
+                BeginDragIconTransform.position = BeginDragIconPoint; // 아이콘 위치를 원래대로 돌려놓는다
+                BeginDragSlot.transform.SetSiblingIndex(BeginDragSlotSiblingIndex); // UI 순서를 원래대로 돌려놓는다
+
+                // 드래그를 종료한다
+                EndDrag();
+
+                // 참조 제거
+                BeginDragSlot = null;
+                BeginDragIconTransform = null;
+            }
+        }
+    }
+
+    /** 인벤토리에서 드래그를 한다 */
+    private void OnPointerDrag()
+    {
+        // 슬롯이 비워져 있을 경우
+        if(BeginDragSlot == null)
+        {
+            return; // 함수를 종료한다
+        }
+
+        /** 왼쪽 클릭을 했을 경우 */
+        if(Input.GetMouseButton(0))
+        {
+            // 선택한 아이콘 위치를 이동한다
+            BeginDragIconTransform.position = BeginDragIconPoint
+                + (Input.mousePosition - BeginDragCursorPoint);
+        }
+    }
+    /** 슬롯을 세팅한다 */
     private void SettingSlots()
     {
         // 슬롯 프리팹 설정
@@ -81,7 +189,5 @@ public class InventoryUI : MonoBehaviour
             return SlotRect;
         }
     }
-
-   
     #endregion // 함수
 }
