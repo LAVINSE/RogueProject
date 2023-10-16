@@ -20,8 +20,9 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private RectTransform ContentRoot; // 슬롯들이 위치할 곳
     [SerializeField] private GameObject SlotPrefab; // 슬롯 원본 객체
 
-    private List<ItemSlotUI> ItemSlotUIList = new List<ItemSlotUI>();
+    private Inventory oInventory; // 연결된 인벤토리
 
+    private List<ItemSlotUI> ItemSlotUIList = new List<ItemSlotUI>();
     private GraphicRaycaster GrRayCaster; // 캔버스에서 레이캐스트 작업할때 사용하는 변수
     private PointerEventData EventData; // 포인트 관련 데이터를 얻기위한 변수
     private List<RaycastResult> RayCastResult; // 레이캐스트 결과값을 저장하는 리스트
@@ -79,7 +80,7 @@ public class InventoryUI : MonoBehaviour
                 BeginDragSlot.transform.SetAsLastSibling(); // 가장 나중에 출력 > 맨 앞으로 나오게설정
 
                 // 해당 슬롯의 하이라이트 이미지를 아이콘보다 뒤에 위치
-                BeginDragSlot.SetHighlightOnTop();
+                //BeginDragSlot.SetHighlightOnTop();
             }
             else
             {
@@ -127,6 +128,7 @@ public class InventoryUI : MonoBehaviour
                 + (Input.mousePosition - BeginDragCursorPoint);
         }
     }
+
     /** 슬롯을 세팅한다 */
     private void SettingSlots()
     {
@@ -188,6 +190,32 @@ public class InventoryUI : MonoBehaviour
 
             return SlotRect;
         }
+    }
+
+    /** 드래그를 종료한다 */
+    private void EndDrag()
+    {
+        ItemSlotUI EndDragSlot = RaycastAndGetFirstComponent<ItemSlotUI>();
+
+        // 드래그가 종료된 시점에 슬롯이 있고, 해당 슬롯이 접근 가능한 상태라면
+        if(EndDragSlot != null && EndDragSlot.IsAccess)
+        {
+            // 원래 위치한 슬롯과 해당 슬롯에 있는 아이템을 교환한다
+            TrySwapItem(BeginDragSlot, EndDragSlot);
+        }
+    }
+    
+    /** 두 슬롯의 아이템 교환 */
+    private void TrySwapItem(ItemSlotUI FirstSlot, ItemSlotUI EndSlot)
+    {
+        // 슬롯이 같을 경우
+        if(FirstSlot == EndSlot)
+        {
+            return;
+        }
+
+        FirstSlot.SwapSlotItemIcon(EndSlot);
+        oInventory.Swap(FirstSlot.SlotIndex, EndSlot.SlotIndex);
     }
     #endregion // 함수
 }

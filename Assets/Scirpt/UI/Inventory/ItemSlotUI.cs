@@ -39,7 +39,7 @@ public class ItemSlotUI : MonoBehaviour
     #endregion // 변수
 
     #region 프로퍼티
-    public int Index { get; private set; } // 슬롯의 인덱스
+    public int SlotIndex { get; private set; } // 슬롯의 인덱스
     public bool HasItem => IconImage.sprite != null; // 슬롯이 아이템을 가지고있는지 확인하는 변수
     public bool IsAccess => IsAccessSlot && IsAccessItem; // 접근 가능한 슬롯인지 확인하는 변수
 
@@ -58,7 +58,8 @@ public class ItemSlotUI : MonoBehaviour
     /** 텍스트를 숨긴다 */
     private void HideText() => TextObject.SetActive(false);
 
-    public void SetSlotIndex(int Index) => this.Index = Index; // 몇번째 슬롯인지 인덱스 저장
+    /* 몇번째 슬롯인지 인덱스 저장 */
+    public void SetSlotIndex(int SlotIndex) => this.SlotIndex = SlotIndex;
 
     /** 슬롯 자체의 활성화 / 비활성화 여부 설정 */
     public void SetSlotAccessState(bool IsAccess)
@@ -82,6 +83,107 @@ public class ItemSlotUI : MonoBehaviour
         }
 
         this.IsAccessSlot = IsAccess;
+    }
+
+    /** 아이템 활성화 / 비활성화 여부 설정 */
+    public void SetItemAccessState(bool IsAccess)
+    {
+        // 중복, 예외처리
+        if(IsAccessItem == IsAccess)
+        {
+            return;
+        }
+
+        // 활성화 상태 일 경우
+        if(IsAccess == true)
+        {
+            IconImage.color = Color.white;
+            ItemAmountText.color = Color.white;
+        }
+        else
+        {
+            IconImage.color = ActiveFalseIconColor;
+            ItemAmountText.color = ActiveFalseIconColor;
+        }
+
+        IsAccessItem = IsAccess;
+    }
+
+    /** 다른 슬롯 아이템과 아이콘 교환 */
+    public void SwapSlotItemIcon(ItemSlotUI OtherItemSlotUI)
+    {
+        // 다른 슬롯이 없을 경우, 자기 자신과 교환 X
+        if(OtherItemSlotUI == null || OtherItemSlotUI == this)
+        {
+            return;
+        }
+
+        // 접근 가능한 슬롯이 아닐경우(자기자신, 다른 슬롯)
+        if(!this.IsAccess || !OtherItemSlotUI.IsAccess)
+        {
+            return;
+        }
+
+        var Temp = IconImage.sprite;
+
+        // 아이템이 있는 경우
+        if(OtherItemSlotUI.HasItem)
+        {
+            // 교환한다
+            SetItem(OtherItemSlotUI.IconImage.sprite);
+        }
+        else
+        {
+            RemoveItem();
+            // 원래대로 되돌린다
+            OtherItemSlotUI.SetItem(Temp);
+        }
+    }
+
+    /** 슬롯에 아이템 등록 */
+    public void SetItem(Sprite ItemSprite)
+    {
+        // 아이템이 있을 경우
+        if(ItemSprite != null)
+        {
+            IconImage.sprite = ItemSprite;
+            ShowIcon();
+        }
+        else
+        {
+            RemoveItem();
+        }
+    }
+
+    /** 슬롯에서 아이템 제거 */
+    public void RemoveItem()
+    {
+        IconImage.sprite = null;
+
+        HideIcon();
+        HideText();
+    }
+
+    /** 아이템 이미지 투명도 설정 */
+    public void SetIconAlpha(float AlphaValue)
+    {
+        IconImage.color = new Color(IconImage.color.r, IconImage.color.g, IconImage.color.b, AlphaValue);
+    }
+
+    /** 아이템 개수 텍스트 설정 1 이하일 경우 텍스트 미표시 */
+    public void SetItemAmount(int Amount)
+    {
+        // 아이템을 가지고 있고, 개수가 1 이상인 경우
+        if(HasItem && Amount > 1)
+        {
+            ShowText();
+        }
+        else
+        {
+            HideText();
+        }
+
+        ItemAmountText.text = Amount.ToString();
     }
     #endregion // 함수
 
