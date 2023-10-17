@@ -36,7 +36,7 @@ public class Inventory : MonoBehaviour
     }
 
     /** 앞에서부터 비어있는 슬롯 인덱스 탐색 */
-    private int FindEmptySlotIndex(int StartSlotIndex)
+    private int FindEmptySlotIndex(int StartSlotIndex = 0)
     {
         for(int i = StartSlotIndex; i < oCapacity; i++)
         {
@@ -225,6 +225,146 @@ public class Inventory : MonoBehaviour
             
         // 두 슬롯 정보 갱신
         UpdateSlot(SlotIndexA, SlotIndexB);
+    }
+
+    /** 인벤토리에 아이템을 추가한다 */
+    public int Add(ItemData oItemData, int Amount = 1)
+    {
+        int SlotIndex;
+
+        // 수량이 있는 아이템일 경우
+        if(oItemData is CountItemData CountData)
+        {
+            bool FindNextCount = true;
+            SlotIndex = -1;
+
+            // 아이템 개수 만큼 반복
+            while(Amount > 0)
+            {
+                // 이미 해당 아이템이 인벤토리 내에 존재하고, 개수 여유 있는지 검사
+                if(FindNextCount)
+                {
+                    // 아이템이 슬롯에 존재하는지 확인
+                    SlotIndex = FindCountSlotItemIndex(CountData, SlotIndex + 1);
+
+                    // 개수 여유있는 기존 슬롯이 더이상 없다고 판단될 경우, 빈 슬롯부터 탐색
+                    if(SlotIndex == -1)
+                    {
+                        FindNextCount= false;
+                    }
+                    else
+                    {
+                        // 기존 슬롯을 찾은 경우, 양 증가시키고 초과량 존재 시 Amount 초기화
+                        CountItem Count = Items[SlotIndex] as CountItem;
+                        Amount = Count.AddAmountAndGetExcess(Amount);
+
+                        UpdateSlot(SlotIndex);
+                    }
+                }
+                else
+                {
+                    // 빈 슬롯 탐색
+                    SlotIndex = FindEmptySlotIndex(SlotIndex + 1);
+
+
+                    // 빈 슬롯조차 없는 경우 종료
+                    if(SlotIndex == -1)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        // 빈 슬롯 발견 시, 슬롯에 아이템 추가 및 남는량 계산
+                        CountItem Count = CountData.CreateItem() as CountItem;
+                        Count.SetAmount(Amount);
+
+                        // 슬롯에 추가
+                        Items[SlotIndex] = Count;
+
+                        // 남은 개수 계산
+                        Amount = (Amount > CountData.oMaxAmount) ? (Amount - CountData.oMaxAmount) : 0;
+
+                        UpdateSlot(SlotIndex);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // 수량이 없는 아이템
+            // 1개만 넣는 경우
+            if(Amount == 1)
+            {
+                SlotIndex = FindEmptySlotIndex();
+                if(SlotIndex != -1)
+                {
+                    // 아이템을 생성하여 슬롯에 추가
+                    Items[SlotIndex] = oItemData.CreateItem();
+                    Amount = 0;
+
+                    UpdateSlot(SlotIndex);
+                }
+            }
+
+
+            // 2개 이상의 수량 없는 아이템을 동시에 추가하는 경우
+            SlotIndex = -1;
+
+            for (; Amount > 0; Amount--)
+            {
+                // 아이템 넣은 인덱스의 다음 인덱스부터 슬롯 탐색
+                SlotIndex = FindEmptySlotIndex(SlotIndex + 1);
+
+                // 다 넣지 못한 경우 루프 종료
+                if(SlotIndex == -1)
+                {
+                    break;
+                }
+
+                // 아이템을 생성하여 슬롯에 추가
+                Items[SlotIndex] = oItemData.CreateItem();
+
+                UpdateSlot(SlotIndex);
+            }
+        }
+
+        // 반환이 0 이면 추가하는데 성공
+        return Amount;
+    }
+
+    /** 인벤토리에서 아이템을 제거한다 */
+    public void Remove(int SlotIndex)
+    {
+        if(!IsValidIndex(SlotIndex))
+        {
+            return;
+        }
+
+        Items[SlotIndex] = null;
+        UpdateSlot(SlotIndex);
+    }
+
+    /** 해당 슬롯의 아이템 사용 */
+    public void Use(int SlotIndex)
+    {
+        // 해당 슬롯에 아이템이 없다면
+        if (Items[SlotIndex] == null)
+        {
+            return;
+        }
+
+        // 사용 가능한 아이템인 경우
+        if (Items[SlotIndex] is IUsableItem UseItem)
+        {
+            // 아이템 사용
+            bool Use = UseItem.Use();
+
+            // 아이템 사용을 성공했을 경우
+            if(Use)
+            {
+                UpdateSlot(SlotIndex);
+            }
+        }
     }
     #endregion // 함수
 }

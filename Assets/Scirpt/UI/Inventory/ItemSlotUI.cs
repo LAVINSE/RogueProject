@@ -12,8 +12,8 @@ public class ItemSlotUI : MonoBehaviour
     [SerializeField] private Image HighlightImage = null; // 아이콘 하이라이트 이미지
 
     [Space]
-    [SerializeField] private float HighlightImageAlpha = 0.0f; // 하이라이트 이미지 알파값
-    [SerializeField] private float HighlightImageFadeDuration = 0.0f; // 하이라이트 Fade 소요시간
+    [SerializeField] private float HighlightImageAlpha = 0.5f; // 하이라이트 이미지 알파값
+    [SerializeField] private float HighlightImageFadeDuration = 0.2f; // 하이라이트 Fade 소요시간
 
     private InventoryUI oInventoryUI;
 
@@ -184,6 +184,59 @@ public class ItemSlotUI : MonoBehaviour
         }
 
         ItemAmountText.text = Amount.ToString();
+    }
+
+    /** 슬롯에 하이라이트 표시/해제 */
+    public void Highlight(bool IsShow)
+    {
+        // 표시 상태일 경우
+        if(IsShow)
+        {
+            StartCoroutine(HighlightFadeIn());
+        }
+        else
+        {
+            // 해제 상태일 경우
+            StartCoroutine(HighlightFadeOut());
+        }
+    }
+
+    /** 하이라이트 알파값 서서히 증가 */
+    private IEnumerator HighlightFadeIn()
+    {
+        StartCoroutine(HighlightFadeOut());
+        HighlightObject.SetActive(true);
+
+        float Alpha = HighlightImageAlpha / HighlightImageFadeDuration;
+
+        for(; CurrentHighlightAlpha <= HighlightImageAlpha; CurrentHighlightAlpha += Alpha * Time.deltaTime)
+        {
+            HighlightImage.color = new Color(HighlightImage.color.r,
+                                            HighlightImage.color.g,
+                                            HighlightImage.color.b,
+                                            CurrentHighlightAlpha);
+
+            yield return null;
+        }
+    }
+
+    /** 하이라이트 알파값 0%까지 서서히 감소 */
+    private IEnumerator HighlightFadeOut()
+    {
+        StartCoroutine(HighlightFadeIn());
+
+        float Alpha = HighlightImageAlpha / HighlightImageFadeDuration;
+        for(; CurrentHighlightAlpha >= 0f; CurrentHighlightAlpha -= Alpha * Time.deltaTime)
+        {
+            HighlightImage.color = new Color(HighlightImage.color.r,
+                                           HighlightImage.color.g,
+                                           HighlightImage.color.b,
+                                           CurrentHighlightAlpha);
+
+            yield return null;
+        }
+
+        HighlightObject.SetActive(false);
     }
     #endregion // 함수
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PotionItem : CountItem//, IUsableItem
+public class PotionItem : CountItem, IUsableItem
 {
     public PotionItem(PotionItemData Data, int Amount = 1) : base(Data, Amount)
     { 
@@ -12,7 +12,6 @@ public class PotionItem : CountItem//, IUsableItem
     public bool Use()
     {
         Amount--;
-
         return true;
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -27,6 +28,7 @@ public class InventoryUI : MonoBehaviour
     private PointerEventData EventData; // 포인트 관련 데이터를 얻기위한 변수
     private List<RaycastResult> RayCastResult; // 레이캐스트 결과값을 저장하는 리스트
 
+    private ItemSlotUI PointerOverSlot; // 현재 포인터가 위차한 곳의 슬롯
     private ItemSlotUI BeginDragSlot; // 현재 드래그를 시작한 슬롯
     private Transform BeginDragIconTransform; // 해당 슬롯의 아이콘 Transform
 
@@ -41,7 +43,7 @@ public class InventoryUI : MonoBehaviour
     {
         EventData.position = Input.mousePosition; // 포인트 위치를 마우스 위치로 설정
 
-
+        OnPointerEnterAndExit();
     }
 
     /** 레이케스트 결과값 리스트에서 첫번째 컴포넌트를 가져온다 */
@@ -203,6 +205,12 @@ public class InventoryUI : MonoBehaviour
             // 원래 위치한 슬롯과 해당 슬롯에 있는 아이템을 교환한다
             TrySwapItem(BeginDragSlot, EndDragSlot);
         }
+
+        // 커서가 UI 레이케스트 타겟 위에 있지 않은 경우, 버리기
+        if(!IsOverUI())
+        {
+            TryRemoveItem(Index);
+        }
     }
     
     /** 두 슬롯의 아이템 교환 */
@@ -216,6 +224,68 @@ public class InventoryUI : MonoBehaviour
 
         FirstSlot.SwapSlotItemIcon(EndSlot);
         oInventory.Swap(FirstSlot.SlotIndex, EndSlot.SlotIndex);
+    }
+
+    /** UI 인벤토리에서 아이템 제거 */
+    private void TryRemoveItem(int SlotIndex)
+    {
+        oInventory.Remove(SlotIndex);
+    }
+
+    /** 커서가 UI 레이케스트 타겟 위에 있는지 확인한다 */
+    private bool IsOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
+    }
+
+    /** 슬롯에 포인터가 올라가는 경우, 슬롯에서 포인터가 빠져나가는 경우 */
+    private void OnPointerEnterAndExit()
+    {
+        // 이전 프레임의 슬롯
+        var PrevSlot = PointerOverSlot;
+
+        // 현재 프레임의 슬롯
+        var CurrentSlot = PointerOverSlot = RaycastAndGetFirstComponent<ItemSlotUI>();
+
+        // 이전 프레임의 슬롯이 존재하지 않을 경우
+        if(PrevSlot == null)
+        {
+            // 현재 프레임의 슬롯이 존재 할 경우
+            if(CurrentSlot != null)
+            {
+                // 현재 슬롯 하이라이트 표시
+                OnCurrentEnter();
+            }
+        }
+        else
+        {
+            // 현재 프레임의 슬롯이 존재하지 않을 경우
+            if(CurrentSlot == null)
+            {
+                // 이전 프레임의 슬롯 하이라이트 해제
+                OnPrevExit();
+            }
+            // 이전 프레임의 슬롯과 현재 프레임의 슬롯이 다를 경우
+            else if(PrevSlot != CurrentSlot)
+            {
+                // 이전 프레임의 슬롯 하이라이트 해제
+                OnPrevExit();
+                // 현재 프레임의 슬롯 하이라이트 표시
+                OnCurrentEnter();
+            }
+        }
+
+        /** 지금 슬롯의 하이라이트 표시 */
+        void OnCurrentEnter()
+        {
+            CurrentSlot.Highlight(true);
+        }
+
+        /** 전 슬롯의 하이라이트 해제 */
+        void OnPrevExit()
+        {
+            PrevSlot.Highlight(false);
+        }
     }
     #endregion // 함수
 }
