@@ -52,7 +52,7 @@ public class Inventory : MonoBehaviour
     /** 모든 슬롯 UI에 접근 가능 여부 업데이트 */
     public void UpdateAccessStateAll()
     {
-        oInventoryUI.SetAccessSlotRange(oCapacity);
+        //oInventoryUI.SetAccessSlotRange(oCapacity);
     }
 
     /** 해당 슬롯이 아이템을 가지고 있는지 여부 */
@@ -146,7 +146,7 @@ public class Inventory : MonoBehaviour
         if(oItem != null)
         {
             // 아이콘 등록
-            oInventoryUI.SettingItemIcon(SlotIndex, oItem.Data.oItemIconSprite);
+            //oInventoryUI.SettingItemIcon(SlotIndex, oItem.Data.oItemIconSprite);
 
 
             // 셀 수 있는 아이템인 경우
@@ -162,13 +162,13 @@ public class Inventory : MonoBehaviour
                 else
                 {
                     // 수량 텍스트 표시
-                    oInventoryUI.SetItemAmoutText(SlotIndex, Count.Amount);
+                    //oInventoryUI.SetItemAmoutText(SlotIndex, Count.Amount);
                 }
             }
             else
             {
                 // 셀 수 없는 아이템인 경우 텍스트 제거
-                oInventoryUI.HideItemAmoutText(SlotIndex);
+                //oInventoryUI.HideItemAmoutText(SlotIndex);
             }
         }
         else
@@ -179,8 +179,8 @@ public class Inventory : MonoBehaviour
 
         void RemoveIcon()
         {
-            oInventoryUI.RemoveItem(SlotIndex);
-            oInventoryUI.HideItemAmoutText(SlotIndex); // 수량 텍스트 숨기기
+            //oInventoryUI.RemoveItem(SlotIndex);
+            //oInventoryUI.HideItemAmoutText(SlotIndex); // 수량 텍스트 숨기기
         }
     }
 
@@ -224,7 +224,7 @@ public class Inventory : MonoBehaviour
         }
             
         // 두 슬롯 정보 갱신
-        UpdateSlot(SlotIndexA, SlotIndexB);
+        //UpdateSlot(SlotIndexA, SlotIndexB);
     }
 
     /** 인벤토리에 아이템을 추가한다 */
@@ -245,7 +245,7 @@ public class Inventory : MonoBehaviour
                 if(FindNextCount)
                 {
                     // 아이템이 슬롯에 존재하는지 확인
-                    SlotIndex = FindCountSlotItemIndex(CountData, SlotIndex + 1);
+                    //SlotIndex = FindCountSlotItemIndex(CountData, SlotIndex + 1);
 
                     // 개수 여유있는 기존 슬롯이 더이상 없다고 판단될 경우, 빈 슬롯부터 탐색
                     if(SlotIndex == -1)

@@ -209,7 +209,7 @@ public class InventoryUI : MonoBehaviour
         // 커서가 UI 레이케스트 타겟 위에 있지 않은 경우, 버리기
         if(!IsOverUI())
         {
-            TryRemoveItem(Index);
+            //TryRemoveItem(Index);
         }
     }
     
