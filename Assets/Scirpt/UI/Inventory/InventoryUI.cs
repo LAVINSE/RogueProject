@@ -20,6 +20,7 @@ public class InventoryUI : MonoBehaviour
     [Header("Object")]
     [SerializeField] private RectTransform ContentRoot; // 슬롯들이 위치할 곳
     [SerializeField] private GameObject SlotPrefab; // 슬롯 원본 객체
+    [SerializeField] private ItemTooltipUI TooltipUI; // 아이템 툴팁 UI
 
     private Inventory oInventory; // 연결된 인벤토리
 
@@ -38,12 +39,24 @@ public class InventoryUI : MonoBehaviour
     #endregion // 변수
 
     #region 함수
+    /** 초기화 */
+    private void Awake()
+    {
+        SettingSlots();  
+    }
+
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
         EventData.position = Input.mousePosition; // 포인트 위치를 마우스 위치로 설정
 
         OnPointerEnterAndExit();
+
+        ShowOrHideItemTooltip();
+
+        OnPointerDown();
+        OnPointerDrag();
+        OnPointerUp();
     }
 
     /** 레이케스트 결과값 리스트에서 첫번째 컴포넌트를 가져온다 */
@@ -286,6 +299,32 @@ public class InventoryUI : MonoBehaviour
         {
             PrevSlot.Highlight(false);
         }
+    }
+
+    /** 아이템 정보 툴팁 보여주거나 감추기 */
+    private void ShowOrHideItemTooltip()
+    {
+        // 마우스가 유효한 아이템 아이콘 위에 올라와 있다면 툴팁 보여주기
+        bool IsValid = PointerOverSlot != null && PointerOverSlot.HasItem && PointerOverSlot.IsAccess &&
+            (PointerOverSlot != BeginDragSlot); // 드래그 시작한 슬롯이면 보여주지 않기
+
+        // 마우스가 조건에 맞는 아이템에 올라와 있다면
+        if(IsValid)
+        {
+            UpdateTooltipUI(PointerOverSlot);
+            TooltipUI.Show();
+        }
+        else
+        {
+            TooltipUI.Hide();
+        }
+    }
+
+    /** 툴팁 UI의 슬롯 데이터 갱신 */
+    private void UpdateTooltipUI(ItemSlotUI Slot)
+    {
+        // 툴팁 정보 갱신
+        TooltipUI.SetItemInfo(oInventory.GetItemData(Slot.SlotIndex));
     }
     #endregion // 함수
 }

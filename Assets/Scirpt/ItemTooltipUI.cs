@@ -61,5 +61,12 @@ public class ItemTooltipUI : MonoBehaviour
             DisableAllChildrenRaycastTarget(oTransform.GetChild(i));
         }
     }
+
+    /** 툴팁 UI에 아이템 정보 등록 */
+    public void SetItemInfo(ItemData Data)
+    {
+        ItemName_Text.text = Data.oItemName;
+        ItemTooltip_Text.text = Data.oItemInfo;
+    }
     #endregion // 함수
 }
