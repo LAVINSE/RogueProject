@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,23 @@ public class Inventory : MonoBehaviour
     [Range(8, 64)][SerializeField] private int MaxCapacity = 64; // 최대 수용 한도
     [SerializeField] private InventoryUI oInventoryUI; // 연결된 인벤토리 UI
     [SerializeField] private Item[] Items; // 아이템 목록
+
+    private HashSet<int> IndexSetForUpdate = new HashSet<int>(); // 업데이트 할 인덱스 목록
+    private readonly static Dictionary<Type, int> SortWeightDict = new Dictionary<Type, int>
+    {
+        {typeof(PotionItemData), 10000 }
+    };
+
+    private class ItemCompare : IComparer<Item>
+    {
+        public int Compare(Item A, Item B)
+        {
+            return (A.Data.oItemId + SortWeightDict[A.Data.GetType()]) -
+                (B.Data.oItemId + SortWeightDict[B.Data.GetType()]);
+        }
+    }
+
+    private static readonly ItemCompare oItemCompare = new ItemCompare();
     #endregion // 변수
 
     #region 프로퍼티
@@ -67,6 +85,36 @@ public class Inventory : MonoBehaviour
     {
         // 아이템이 가지고 있는지 확인하고 , 해당 슬롯이 셀수 있는 아이템이면 true
         return HasItem(SlotIndex) && Items[SlotIndex] is CountItem;
+    }
+
+    /** 셀 수 있는 아이템의 수량 나누기 (A > B 슬롯으로) */
+    public void SeparateAmount(int SlotIndexA, int SlotIndexB, int AmountSeparate)
+    {
+        // AmountSeparate : 나눌 목표 수량
+
+        if(!IsValidIndex(SlotIndexA))
+        {
+            return;
+        }
+        if (!IsValidIndex(SlotIndexB))
+        {
+            return;
+        }
+
+        Item ItemA = Items[SlotIndexA];
+        Item ItemB = Items[SlotIndexB];
+
+        CountItem CountItemA = ItemA as CountItem;
+
+        // 조건 : A 슬롯 - 셀 수 있는 아이템 / B 슬롯 - null
+        // 조건에 맞는 경우, 복제하여 슬롯 B에 추가
+
+        if(CountItemA != null && ItemB == null)
+        {
+            Items[SlotIndexB] = CountItemA.SeperateAndClone(AmountSeparate);
+
+            UpdateSlot(SlotIndexA, SlotIndexB);
+        }
     }
 
     /** 해당 슬롯의 현재 아이템 개수 리턴 */
@@ -181,6 +229,24 @@ public class Inventory : MonoBehaviour
         {
             //oInventoryUI.RemoveItem(SlotIndex);
             //oInventoryUI.HideItemAmoutText(SlotIndex); // 수량 텍스트 숨기기
+        }
+    }
+
+    /** 해당하는 인덱스의 슬롯 상태 및 UI 갱신 */
+    private void UpdateSlot(params int[] SlotIndex)
+    {
+        foreach(var i in SlotIndex)
+        {
+            UpdateSlot(i);
+        }
+    }
+
+    /** 해당하는 인덱스의 슬롯 상태 및 UI 갱신 */
+    private void UpdateAllSlot()
+    {
+        for(int i = 0; i < oCapacity; i++)
+        {
+            UpdateSlot(i);
         }
     }
 
@@ -365,6 +431,75 @@ public class Inventory : MonoBehaviour
                 UpdateSlot(SlotIndex);
             }
         }
+    }
+
+    /** */
+    public void TrimAll()
+    {
+        /*  i 커서와 j 커서가 존재한다.
+            i 커서 : 가장 앞에 있는 빈칸을 찾는 커서
+            j 커서 : i 커서 위치에서부터 뒤로 이동하며 빈칸이 아닌 곳을 찾는 커서
+
+            i커서가 빈칸을 찾으면 j 커서는 i+1 위치부터 뒤로 이동하며 빈칸이 아닌 곳을 찾는다.
+            j커서가 아이템을 찾으면 아이템을 i커서 위치로 옮기고, i 커서는 i+1 위치로 이동한다.
+            j커서가 배열 범위를 벗어나면 종료한다
+         */
+
+        IndexSetForUpdate.Clear();
+
+        int i = -1;
+        while (Items[i++] != null) ;
+        int j = i;
+
+        while(true)
+        {
+            while (j++ < oCapacity && Items[j] == null) ;
+            
+            if(j == oCapacity)
+            {
+                break;
+            }
+
+            IndexSetForUpdate.Add(i);
+            IndexSetForUpdate.Add(j);
+
+            Items[i] = Items[j];
+            Items[j] = null;
+            i++;
+        }
+
+        foreach(var Index in IndexSetForUpdate)
+        {
+            UpdateSlot(Index);
+        }
+    }
+
+    public void SortAll()
+    {
+        // Trim
+        int i = -1;
+        while (Items[i++] != null) ;
+        int j = i;
+
+        while (true)
+        {
+            while (j++ < oCapacity && Items[j] == null) ;
+
+            if(j == oCapacity)
+            {
+                break;
+            }
+
+            Items[i] = Items[j];
+            Items[j] = null;
+            i++;
+        }
+
+        // Sort
+        Array.Sort(Items, 0, i, oItemCompare);
+
+        // Update
+        UpdateAllSlot();
     }
     #endregion // 함수
 }

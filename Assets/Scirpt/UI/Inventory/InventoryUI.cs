@@ -1,14 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 public class InventoryUI : MonoBehaviour
 {
+    private enum FilterOption
+    {
+        All,
+        Equip,
+        Potion
+    }
+
     #region 변수
     [Header("Slot Option")]
     [Range(0, 10)][SerializeField] private int HorizontalSlotCount = 0; // 슬롯 가로 개수
@@ -21,6 +27,12 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private RectTransform ContentRoot; // 슬롯들이 위치할 곳
     [SerializeField] private GameObject SlotPrefab; // 슬롯 원본 객체
     [SerializeField] private ItemTooltipUI TooltipUI; // 아이템 툴팁 UI
+    [SerializeField] private InventoryPopupUI InventoryPopup;
+    [SerializeField] private Button TrimButton;
+    [SerializeField] private Button SortButton;
+    [SerializeField] private Toggle ToggleFilterAll;
+    [SerializeField] private Toggle ToggleFilterEquip;
+    [SerializeField] private Toggle ToggleFilterPotion;
 
     private Inventory oInventory; // 연결된 인벤토리
 
@@ -36,6 +48,8 @@ public class InventoryUI : MonoBehaviour
     private Vector3 BeginDragIconPoint; // 드래그 시작 시 슬롯의 위치
     private Vector3 BeginDragCursorPoint; // 드래그 시작 시 커서의 위치
     private int BeginDragSlotSiblingIndex;
+
+    private FilterOption CurrentFilterOption = FilterOption.All;
     #endregion // 변수
 
     #region 함수
@@ -43,6 +57,10 @@ public class InventoryUI : MonoBehaviour
     private void Awake()
     {
         SettingSlots();  
+        TrimButton.onClick.AddListener(() => oInventory.TrimAll());
+        SortButton.onClick.AddListener(() => oInventory.SortAll());
+
+        SettingToggleEvent();
     }
 
     /** 초기화 => 상태를 갱신한다 */
@@ -95,7 +113,7 @@ public class InventoryUI : MonoBehaviour
                 BeginDragSlot.transform.SetAsLastSibling(); // 가장 나중에 출력 > 맨 앞으로 나오게설정
 
                 // 해당 슬롯의 하이라이트 이미지를 아이콘보다 뒤에 위치
-                //BeginDragSlot.SetHighlightOnTop();
+                BeginDragSlot.SetHighlightOnTop(true);
             }
             else
             {
@@ -215,14 +233,60 @@ public class InventoryUI : MonoBehaviour
         // 드래그가 종료된 시점에 슬롯이 있고, 해당 슬롯이 접근 가능한 상태라면
         if(EndDragSlot != null && EndDragSlot.IsAccess)
         {
-            // 원래 위치한 슬롯과 해당 슬롯에 있는 아이템을 교환한다
-            TrySwapItem(BeginDragSlot, EndDragSlot);
+            // 수량 나누기 조건
+            // 마우스 클릭 떼는 순간 좌측 컨트롤 또는 쉬프트 키 유지
+            // Begin : 셀 수 있는 아이템 / End : 비어있는 슬롯
+            // Begin 아이템의 수량 > 1
+
+            bool IsSeparate = 
+                (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift)) &&
+                (oInventory.IsCountItem(BeginDragSlot.SlotIndex) && !oInventory.HasItem(EndDragSlot.SlotIndex));
+
+            // true 수량 나누기, false 교환 또는 이동
+            bool IsPossible = false;
+            int CurrentAmount = 0;
+
+            if(IsSeparate)
+            {
+                CurrentAmount = oInventory.GetCurrentAmount(BeginDragSlot.SlotIndex);
+                if(CurrentAmount > 1)
+                {
+                    IsPossible = true;
+                }
+            }
+
+            // 개수 나누기
+            if(IsPossible)
+            {
+                TrySeparableAmount(BeginDragSlot.SlotIndex, EndDragSlot.SlotIndex, CurrentAmount);
+            }
+            // 교환 또는 이동
+            else
+            {
+                // 원래 위치한 슬롯과 해당 슬롯에 있는 아이템을 교환한다
+                TrySwapItem(BeginDragSlot, EndDragSlot);
+            }
+
+            // 툴팁 갱신
+            UpdateTooltipUI(EndDragSlot);
+            return;         
         }
 
         // 커서가 UI 레이케스트 타겟 위에 있지 않은 경우, 버리기
         if(!IsOverUI())
         {
-            //TryRemoveItem(Index);
+            int SlotIndex = BeginDragSlot.SlotIndex;
+            string ItemName = oInventory.GetItemName(SlotIndex);
+            int Amount = oInventory.GetCurrentAmount(SlotIndex);
+
+            // 셀 수 있는 아이템의 경우, 수량 표시
+            if(Amount > 1)
+            {
+                ItemName += $" x{Amount}";
+            }
+
+            // 확인 팝업 띄우고 콜백
+            InventoryPopup.ShowOKCancel(() => TryRemoveItem(SlotIndex), ItemName);
         }
     }
     
@@ -243,6 +307,20 @@ public class InventoryUI : MonoBehaviour
     private void TryRemoveItem(int SlotIndex)
     {
         oInventory.Remove(SlotIndex);
+    }
+
+    /** 셀 수 있는 아이템 개수 나누기 */
+    private void TrySeparableAmount(int SlotIndexA, int SlotIndexB, int Amount)
+    {
+        if(SlotIndexA == SlotIndexB)
+        {
+            return;
+        }
+
+        string ItemName = oInventory.GetItemName(SlotIndexA);
+
+        InventoryPopup.ShowAmountInputPopup(CurrentAmount =>
+        oInventory.SeparateAmount(SlotIndexA, SlotIndexB, CurrentAmount), Amount, ItemName);
     }
 
     /** 커서가 UI 레이케스트 타겟 위에 있는지 확인한다 */
@@ -325,6 +403,57 @@ public class InventoryUI : MonoBehaviour
     {
         // 툴팁 정보 갱신
         TooltipUI.SetItemInfo(oInventory.GetItemData(Slot.SlotIndex));
+    }
+
+    /** 특정 슬롯의 필터 상태 업데이트 */
+    public void UpdateFilterState(int SlotIndex, ItemData Data)
+    {
+        bool IsFilter = true;
+
+        // null인 슬롯은 타입 검사 없이 필터 활성화
+        if(Data != null)
+        {
+            switch(CurrentFilterOption)
+            {
+                case FilterOption.Equip:
+                    //IsFilter = (Data is EquipItemData);
+                    break;
+                case FilterOption.Potion:
+                    IsFilter = (Data is PotionItemData);
+                    break;
+            }
+        }
+
+        ItemSlotUIList[SlotIndex].SetItemAccessState(IsFilter);
+    }
+
+    /** 모든 슬롯 필터 상태 업데이트 */
+    public void UpdateAllSlotFilter()
+    {
+        int Capacity = oInventory.oCapacity;
+
+        for(int i = 0; i < Capacity; i++)
+        {
+            ItemData Data = oInventory.GetItemData(i);
+            UpdateFilterState(i, Data);
+        }
+    }
+
+    /** 토글 설정 */
+    private void SettingToggleEvent()
+    {
+        ToggleFilterAll.onValueChanged.AddListener(Flag => UpdateFilter(Flag, FilterOption.All));
+        ToggleFilterEquip.onValueChanged.AddListener(Flag => UpdateFilter(Flag, FilterOption.Equip));
+        ToggleFilterPotion.onValueChanged.AddListener(Flag => UpdateFilter(Flag, FilterOption.Potion));
+
+        void UpdateFilter(bool Flag, FilterOption Option)
+        {
+            if(Flag)
+            {
+                CurrentFilterOption = Option;
+                UpdateAllSlotFilter();
+            }
+        }
     }
     #endregion // 함수
 }

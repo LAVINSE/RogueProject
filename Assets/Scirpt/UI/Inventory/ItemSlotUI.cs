@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,9 @@ public class ItemSlotUI : MonoBehaviour
 {
     #region 변수
     [SerializeField] private Image IconImage = null; // 아이템 아이콘 이미지
-    [SerializeField] private TMP_Text ItemAmountText = null; // 아이템 개수 텍스트
     [SerializeField] private Image HighlightImage = null; // 아이콘 하이라이트 이미지
-
+    [SerializeField] private TMP_Text ItemAmountText = null; // 아이템 개수 텍스트
+    
     [Space]
     [SerializeField] private float HighlightImageAlpha = 0.5f; // 하이라이트 이미지 알파값
     [SerializeField] private float HighlightImageFadeDuration = 0.2f; // 하이라이트 Fade 소요시간
@@ -48,6 +49,25 @@ public class ItemSlotUI : MonoBehaviour
     #endregion // 프로퍼티
 
     #region 함수
+    /** 초기화 */
+    private void Awake()
+    {
+        oInventoryUI = GetComponentInParent<InventoryUI>();
+
+        SlotRect = GetComponent<RectTransform>();
+        IconRect = IconImage.rectTransform;
+        HighlightRect = HighlightImage.rectTransform;
+
+        IconObject = IconRect.gameObject;
+        TextObject = ItemAmountText.gameObject;
+        HighlightObject = HighlightImage.gameObject;
+
+        SlotImage = GetComponent<Image>();
+
+        HideIcon();
+        HighlightObject.SetActive(false);
+    }
+
     /** 아이콘을 보여준다*/
     private void ShowIcon() => IconObject.SetActive(true);
     /** 아이콘을 숨긴다 */
@@ -135,9 +155,10 @@ public class ItemSlotUI : MonoBehaviour
         else
         {
             RemoveItem();
-            // 원래대로 되돌린다
-            OtherItemSlotUI.SetItem(Temp);
         }
+
+        // 원래대로 되돌린다
+        OtherItemSlotUI.SetItem(Temp);
     }
 
     /** 슬롯에 아이템 등록 */
@@ -189,6 +210,12 @@ public class ItemSlotUI : MonoBehaviour
     /** 슬롯에 하이라이트 표시/해제 */
     public void Highlight(bool IsShow)
     {
+        // 접근 가능한 경우가 아닐 경우
+        if(!this.IsAccess)
+        {
+            return;
+        }
+
         // 표시 상태일 경우
         if(IsShow)
         {
@@ -198,6 +225,19 @@ public class ItemSlotUI : MonoBehaviour
         {
             // 해제 상태일 경우
             StartCoroutine(HighlightFadeOut());
+        }
+    }
+
+    /** 하이라이트 이미지를 아이콘 이미지의 상단/하단으로 표시 */
+    public void SetHighlightOnTop(bool IsHighlight)
+    {
+        if(IsHighlight)
+        {
+            HighlightRect.SetAsLastSibling();
+        }
+        else
+        {
+            HighlightRect.SetAsFirstSibling();
         }
     }
 
