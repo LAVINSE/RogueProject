@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnemyPrefab: {fileID: 991401981467936336, guid: 2193cfa0c41207e4399c5aa3be1aa7e1, type: 3}
   oEnemyType: 3
-  EnemyHp: 20
-  EnemyAtk: 1
+  EnemyHp: 30
+  EnemyAtk: 3

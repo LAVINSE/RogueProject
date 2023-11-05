@@ -25,7 +25,7 @@ public class EnemySetting : MonoBehaviour
     /** 적이 죽었을 때 */
     private void EnemyDie()
     {
-        StageManager.Instance.PoolManager.DeSpawnObj<EnemySetting>(this.gameObject, CompleteDespawn);
+        GameManager.Inst.PoolManager.DeSpawnObj<EnemySetting>(this.gameObject, CompleteDespawn);
     }
 
     /** 적 비활성화가 완료 되었을 경우 */

@@ -27,11 +27,11 @@ public class EnemySpawnerManager : MonoBehaviour
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
-        Enterplayer();
+        EnterplayerSpawnEnemy();
     }
 
     /** 스테이지에 플레이어가 입장했을 경우 */
-    private void Enterplayer()
+    private void EnterplayerSpawnEnemy()
     {
         // 스테이지에 입장 했을 경우
         if (IsStart == true)
@@ -82,7 +82,7 @@ public class EnemySpawnerManager : MonoBehaviour
     /** 적 오브텍트 풀링 */
     private EnemySetting EnemyObjectPool(EnemyTable EnemyTableScript, GameObject EnemyRoot)
     {
-        var Enemy = StageManager.Instance.PoolManager.SpawnObj<EnemySetting>(() =>
+        var Enemy = GameManager.Inst.PoolManager.SpawnObj<EnemySetting>(() =>
         {
             return CFactory.CreateCloneObj(EnemyTableScript.oEnemyType.ToString(), EnemyTableScript.EnemyPrefab,
                 EnemyRoot, Vector3.zero, Vector3.one, Vector3.zero);

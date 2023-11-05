@@ -30,7 +30,14 @@ public class CSingleton<T> : MonoBehaviour where T : CSingleton<T>
     /** 초기화 */
     public virtual void Awake()
     {
+        if (CSingleton<T>.oInst != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         Debug.Assert(CSingleton<T>.oInst == null);
+
         if(oInst != null)
         {
             Destroy(this.gameObject);

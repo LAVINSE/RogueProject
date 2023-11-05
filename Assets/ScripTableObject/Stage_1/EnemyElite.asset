@@ -15,4 +15,4 @@ MonoBehaviour:
   EnemyPrefab: {fileID: 8177106075341488768, guid: 0e280cd4ce521994eb618b6731c6a2f4, type: 3}
   oEnemyType: 2
   EnemyHp: 20
-  EnemyAtk: 1
+  EnemyAtk: 2
