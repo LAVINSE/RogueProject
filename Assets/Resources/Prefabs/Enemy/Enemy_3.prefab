@@ -349,6 +349,8 @@ GameObject:
   m_Component:
   - component: {fileID: 991401981467936339}
   - component: {fileID: 7461171100311934930}
+  - component: {fileID: 8182669835446773657}
+  - component: {fileID: 238865478872002821}
   - component: {fileID: 3636411983480686509}
   m_Layer: 8
   m_Name: Enemy_3
@@ -394,6 +396,72 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!60 &8182669835446773657
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991401981467936336}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0, y: 1}
+      - {x: -0.7611909, y: 0.67951566}
+      - {x: -1.0333688, y: 0.28656814}
+      - {x: -0.6871048, y: 0.27244124}
+      - {x: -0.6311924, y: 0.19944066}
+      - {x: -0.7803624, y: -0.021271527}
+      - {x: -0.76564044, y: -0.18092817}
+      - {x: -0.8045985, y: -0.40054855}
+      - {x: -0.6347032, y: -0.56660706}
+      - {x: -0.3437187, y: -0.6993674}
+      - {x: 0.2202605, y: -0.7855579}
+      - {x: 0.47843325, y: -0.58009595}
+      - {x: 0.51908386, y: -0.38829845}
+      - {x: 0.71007425, y: -0.3749802}
+      - {x: 0.8033319, y: -0.15145156}
+      - {x: 0.5484955, y: 0.057816677}
+      - {x: 0.4734868, y: -0.09517026}
+      - {x: 0.33800325, y: 0.02594982}
+      - {x: 0.38124698, y: 0.13554585}
+      - {x: 0.47963107, y: 0.55595434}
+--- !u!50 &238865478872002821
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991401981467936336}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 10
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!114 &3636411983480686509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,4 +477,5 @@ MonoBehaviour:
   oEnemyType: 0
   EnemyHp: 0
   EnemyAtk: 0
+  EnemyDrop: {fileID: 11400000, guid: 2f2ac52f6d9c6754abcc7eade71688d5, type: 2}
   oEnemyTable: {fileID: 0}

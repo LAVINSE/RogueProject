@@ -349,7 +349,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9004148124358793284}
   - component: {fileID: 3123773668918704367}
-  - component: {fileID: 9140129330851148418}
+  - component: {fileID: 5835095640834454524}
   - component: {fileID: 3411123131632911913}
   - component: {fileID: 5786223893791645013}
   m_Layer: 8
@@ -396,8 +396,8 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!61 &9140129330851148418
-BoxCollider2D:
+--- !u!60 &5835095640834454524
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -409,7 +409,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.1822133, y: 0.036442667}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -419,9 +419,39 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.7392654, y: 1.8225627}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.5216786, y: 0.10620959}
+      - {x: 0.3732202, y: 0.07249519}
+      - {x: 0.20608258, y: 0.1550861}
+      - {x: 0.29641956, y: 0.4099178}
+      - {x: 0.14389676, y: 0.4945717}
+      - {x: 0.18252832, y: 0.5781255}
+      - {x: 0.21969306, y: 0.7381035}
+      - {x: 0.103262156, y: 0.86306167}
+      - {x: -0.03912556, y: 0.9311447}
+      - {x: -0.24340884, y: 0.890466}
+      - {x: -0.6663188, y: 0.91617817}
+      - {x: -0.7917326, y: 0.4859423}
+      - {x: -0.7319886, y: 0.25425}
+      - {x: -0.8461799, y: 0.1637396}
+      - {x: -0.914973, y: 0.036550343}
+      - {x: -0.8664492, y: -0.091146946}
+      - {x: -0.9603077, y: -0.23748371}
+      - {x: -0.9196533, y: -0.4563407}
+      - {x: -0.9571271, y: -0.52100945}
+      - {x: -1.0826924, y: -0.6447424}
+      - {x: -0.9280123, y: -0.674441}
+      - {x: -0.7434413, y: -0.7844459}
+      - {x: -0.5737678, y: -0.80338174}
+      - {x: -0.48433647, y: -0.7420797}
+      - {x: 0.09408112, y: -0.845805}
+      - {x: 0.2296024, y: -0.783064}
+      - {x: 0.23484251, y: -0.6386308}
+      - {x: 0.31379768, y: -0.52159}
+      - {x: 0.41996384, y: -0.3129772}
+      - {x: 0.71733207, y: -0.24004434}
+      - {x: 0.66505104, y: -0.03175527}
 --- !u!50 &3411123131632911913
 Rigidbody2D:
   serializedVersion: 4
@@ -458,4 +488,5 @@ MonoBehaviour:
   oEnemyType: 0
   EnemyHp: 0
   EnemyAtk: 0
+  EnemyDrop: {fileID: 11400000, guid: 2f2ac52f6d9c6754abcc7eade71688d5, type: 2}
   oEnemyTable: {fileID: 0}

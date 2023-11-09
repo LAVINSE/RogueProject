@@ -18,12 +18,20 @@ public class EnemySpawnerManager : MonoBehaviour
 
     [Header("=====> 인스펙터 제어 변수 <=====")]
     [SerializeField] private bool IsStart = false; // 스테이지 입장 했는지 확인하는 변수
+    [SerializeField] public bool IsEnemyAllKill = false;
     #endregion // 변수
 
     #region 프로퍼티
+    public static EnemySpawnerManager Instance { get; private set; }
     #endregion // 프로퍼티
 
     #region 함수
+    /** 초기화 */
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {

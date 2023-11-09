@@ -9,12 +9,12 @@ public class ItemSlot : MonoBehaviour
     [SerializeField] private Image SlotImg;
     [SerializeField] private Image ItemIconImg;
 
-    private ItemInfo Item;
+    private ItemInfoTable Item;
     private RectTransform ItemIconImgRect;
     #endregion // 변수
 
     #region 프로퍼티
-    public ItemInfo oItemInfo
+    public ItemInfoTable oItemInfo
     {
         get { return Item; }
         set

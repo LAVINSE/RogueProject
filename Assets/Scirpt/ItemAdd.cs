@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface ItemAdd
 {
-    ItemInfo ItemAdd();
+    ItemInfoTable ItemAdd();
 }

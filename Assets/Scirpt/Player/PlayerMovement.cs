@@ -6,24 +6,42 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     #region 변수
-    [Header("=====> 플레이어 속도 정보 기본값 : 3 <=====")]
+    [Header("=====> 플레이어 Move 값 <=====")]
     [SerializeField] private float PlayerSpeed = 3;
-    [SerializeField] private float PlayerJumpPower = 3;
+    [SerializeField] private float PlayerJumpPower = 10;
+    [SerializeField] private int JumpCount = 0; // 더블 점프 변수
+
+    [Space]
+    [SerializeField] private Transform Pos;
+    [SerializeField] private float Radius;
+    [SerializeField] private LayerMask Layer;
+    
 
     private Rigidbody2D Rigid2D;
     private SpriteRenderer SpriteRender;
     private Animator PlayerAnimator;
 
-    private int JumpCount = 0; // 더블 점프 변수
+    private int JumtCnt;
+    private bool IsGround;
     #endregion // 변수
 
+
     #region 함수
+    /** 확인용 */
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(Pos.position, Radius);
+    }
+
     /** 초기화 */
     private void Awake()
     {
-        Rigid2D = GetComponent<Rigidbody2D>();
-        SpriteRender = GetComponent<SpriteRenderer>();
-        PlayerAnimator = GetComponent<Animator>();
+        Rigid2D = GetComponentInParent<Rigidbody2D>();
+        SpriteRender = GetComponentInParent<SpriteRenderer>();
+        PlayerAnimator = GetComponentInParent<Animator>();
+
+        JumtCnt = JumpCount;
     }
 
     /** 초기화 => 상태를 갱신한다 */
@@ -44,9 +62,6 @@ public class PlayerMovement : MonoBehaviour
     {
         // 좌우 이동
         PlayerMove();
-
-        // 점프 제어자
-        PlayerJumpController();
     }
 
     /** 플레이어가 움직인다 */
@@ -59,29 +74,29 @@ public class PlayerMovement : MonoBehaviour
     /** 플레이어가 점프를 한다 */
     private void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.C) && JumpCount < 2)
+        IsGround = Physics2D.OverlapCircle(Pos.position, Radius, Layer);
+
+        if (IsGround == true && Input.GetKeyDown(KeyCode.C) && JumtCnt > 0)
         {
             Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
-            JumpCount++;
             PlayerAnimator.SetBool("IsJumping", true);
         }
-    }
 
-    /** 플레이어 점프를 제어한다 */
-    private void PlayerJumpController()
-    {
-        RaycastHit2D RayHit = Physics2D.Raycast(Rigid2D.position, Vector3.down, 1f, LayerMask.GetMask("Platform"));
-
-        if (Rigid2D.velocity.y < 0)
+        if (IsGround == false && Input.GetKeyDown(KeyCode.C) && JumtCnt > 0)
         {
-            if (RayHit.collider != null)
-            {
-                if (RayHit.distance < 0.7f)
-                {
-                    JumpCount = 0;
-                    PlayerAnimator.SetBool("IsJumping", false);
-                }
-            }
+            Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
+            PlayerAnimator.SetBool("IsJumping", true);
+        }
+
+        if(Input.GetKeyUp(KeyCode.C))
+        {
+            JumtCnt--;
+        }
+
+        if(IsGround == true)
+        {
+            JumtCnt = JumpCount;
+            PlayerAnimator.SetBool("IsJumping", false);
         }
     }
 

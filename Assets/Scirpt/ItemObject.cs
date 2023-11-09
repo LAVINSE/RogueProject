@@ -6,7 +6,7 @@ public class ItemObject : MonoBehaviour, ItemAdd
 {
     #region 변수
     [Header("=====> 아이템 <=====")]
-    [SerializeField] private ItemInfo Item = null;
+    [SerializeField] private ItemInfoTable Item = null;
 
     private SpriteRenderer ItemImg;
     #endregion // 변수
@@ -30,7 +30,7 @@ public class ItemObject : MonoBehaviour, ItemAdd
         ItemImg.sprite = Item.ItemImage;
     }
     
-    public ItemInfo ItemAdd()
+    public ItemInfoTable ItemAdd()
     {
         return this.Item;
     }

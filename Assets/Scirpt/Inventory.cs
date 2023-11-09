@@ -8,7 +8,7 @@ public class Inventory : MonoBehaviour
 {
     #region 변수
     [Header("=====> 아이템 리스트 <=====")]
-    [SerializeField] private List<ItemInfo> ItemList = new List<ItemInfo>();
+    [SerializeField] private List<ItemInfoTable> ItemList = new List<ItemInfoTable>();
 
     [Header("=====> 인벤토리 슬롯 설정 <=====")]
     [Range(0, 10)][SerializeField] private int VerticalSlotCount = 0; // 세로 길이 설정
@@ -33,7 +33,7 @@ public class Inventory : MonoBehaviour
 
     #region 프로퍼티
     public static Inventory Instance { get; private set; }
-    public List<ItemInfo> oItemList
+    public List<ItemInfoTable> oItemList
     {
         get => ItemList;
         set => ItemList = value;
@@ -61,7 +61,9 @@ public class Inventory : MonoBehaviour
     {
         // PointerEvent.position = Input.mousePosition;
 
-        OnPointerDown();
+        //OnPointerDown();
+        //OnPointerDrag();
+        //OnPointerUp();
     }
 
     /** 슬롯을 업데이트 한다 */
@@ -110,7 +112,7 @@ public class Inventory : MonoBehaviour
     }
 
     /** 아이템을 추가한다 */
-    public bool AddItem(ItemInfo Item)
+    public bool AddItem(ItemInfoTable Item)
     {
         bool IsAddItem = false;
 
