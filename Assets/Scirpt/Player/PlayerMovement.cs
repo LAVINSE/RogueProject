@@ -12,10 +12,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private int JumpCount = 0; // 더블 점프 변수
 
     [Space]
-    [SerializeField] private Transform Pos;
-    [SerializeField] private float Radius;
-    [SerializeField] private LayerMask Layer;
-    
+    [SerializeField] private Transform JumpPos;
+    [SerializeField] private Transform MeleePos; // filp에 따라 위치 바꾸기
+    [SerializeField] private float JumpSize;
+    [SerializeField] private LayerMask JumpLayer;
+
+    [Space]
+    [SerializeField] private SpriteRenderer SwordRenderer;
+    [SerializeField] private SpriteRenderer WeaponRenderer;
 
     private Rigidbody2D Rigid2D;
     private SpriteRenderer SpriteRender;
@@ -31,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(Pos.position, Radius);
+        Gizmos.DrawWireSphere(JumpPos.position, JumpSize);
     }
 
     /** 초기화 */
@@ -74,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
     /** 플레이어가 점프를 한다 */
     private void Jump()
     {
-        IsGround = Physics2D.OverlapCircle(Pos.position, Radius, Layer);
+        IsGround = Physics2D.OverlapCircle(JumpPos.position, JumpSize, JumpLayer);
 
         if (IsGround == true && Input.GetKeyDown(KeyCode.C) && JumtCnt > 0)
         {
@@ -108,6 +112,10 @@ public class PlayerMovement : MonoBehaviour
         {
             // 왼쪽 방향일 경우 flipX 체크해제
             SpriteRender.flipX = Input.GetAxisRaw("Horizontal") == 1;
+            SwordRenderer.flipX = Input.GetAxisRaw("Horizontal") == 1;
+            WeaponRenderer.flipX = Input.GetAxisRaw("Horizontal") == 1;
+            MeleePos.localPosition = Input.GetAxisRaw("Horizontal") == 1
+                ? new Vector3(1.17f, -0.5f, 0) : new Vector3(-1.17f, -0.5f, 0);
         }
     }
 

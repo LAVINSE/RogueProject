@@ -9,6 +9,7 @@ public class CSceneManager : MonoBehaviour
 
     #region 프로퍼티
     public GameObject InventoryRoot { get; private set; }
+    public GameObject PublicRoot { get; private set; }
     #endregion // 프로퍼티
 
     #region 함수 
@@ -21,6 +22,8 @@ public class CSceneManager : MonoBehaviour
         {
             this.InventoryRoot = this.InventoryRoot ??
                 RootObjs[i].transform.Find("Canvas/InventoryRoot")?.gameObject;
+            this.PublicRoot = this.PublicRoot ??
+                RootObjs[i].transform.Find("Canvas/PublicRoot")?.gameObject;
         }
     }
 
@@ -32,6 +35,21 @@ public class CSceneManager : MonoBehaviour
             InventoryRoot, Vector3.zero, Vector3.one, Vector3.zero);
 
         return Inventory;
+    }
+
+    /** 상태바를 생성한다 */
+    public StateBar CreateStateBar()
+    {
+        var StateBar = CFactory.CreateCloneObj<StateBar>("StateBar",
+            Resources.Load<GameObject>("Prefabs/UI/StateBar"), PublicRoot,
+            Vector3.zero, Vector3.one, Vector3.zero);
+
+        var StateRect = StateBar.GetComponent<RectTransform>();
+        StateRect.anchorMin = new Vector2(0, 0);
+        StateRect.anchorMax = new Vector2(0, 0);
+        StateRect.pivot = Vector3.zero;
+
+        return StateBar;
     }
     #endregion // 함수
 }

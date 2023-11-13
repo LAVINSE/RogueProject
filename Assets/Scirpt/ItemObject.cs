@@ -9,6 +9,8 @@ public class ItemObject : MonoBehaviour, ItemAdd
     [SerializeField] private ItemInfoTable Item = null;
 
     private SpriteRenderer ItemImg;
+    private Rigidbody2D Rigid;
+    private BoxCollider2D BoxCollider;
     #endregion // 변수
 
     #region 함수
@@ -16,12 +18,23 @@ public class ItemObject : MonoBehaviour, ItemAdd
     private void Awake()
     {
         ItemImg = GetComponent<SpriteRenderer>();
+        Rigid = GetComponent<Rigidbody2D>();
+        BoxCollider = GetComponent<BoxCollider2D>();
     }
 
     /** 초기화 */
     private void Start()
     {
         SettingItem();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Map"))
+        {
+            Rigid.bodyType = RigidbodyType2D.Kinematic;
+            BoxCollider.isTrigger = true;
+        }
     }
 
     /** 아이템을 세팅한다 */

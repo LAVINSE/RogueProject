@@ -37,6 +37,13 @@ public class EnemySetting : MonoBehaviour
         this.EnemyAtk = this.oEnemyTable.EnemyAtk;
     }
 
+    /** 데미지를 받는다 */
+    public void TakeDamage(float Damage)
+    {
+        // 피격 모션 추가예정
+        EnemyHp -= Damage;
+    }
+
     /** 적이 죽었을 때 */
     public void EnemyDie()
     {

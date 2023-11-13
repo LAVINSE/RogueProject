@@ -9,7 +9,7 @@ public class GameManager : CSingleton<GameManager>
 
     #region 프로퍼티
     public ObjectPoolManager PoolManager { get; private set; }
-    public List<ItemInfoTable> PlayerItemList = new List<ItemInfoTable>();
+    public List<ItemInfoTable> PlayerItemList { get; set; } = new List<ItemInfoTable>();
     #endregion // 프로퍼티
 
     #region 함수

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3325273118797122278}
   - component: {fileID: 1083000135607161084}
   m_Layer: 0
-  m_Name: weapon_sword_idle_side
+  m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ Animator:
   m_GameObject: {fileID: 199165400056766237}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 73b6b8ed330e6e04aba407704826ebed, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -106,6 +106,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &2401044419142982373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4932859386229319219}
+  m_Layer: 7
+  m_Name: MeleePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4932859386229319219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2401044419142982373}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.17, y: -0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2777741078009616250}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2777741078009616249
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,6 +174,7 @@ Transform:
   - {fileID: 7158894111354786511}
   - {fileID: 2840581601759815479}
   - {fileID: 8741676486693269871}
+  - {fileID: 4932859386229319219}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -268,7 +300,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7302257c0a5125a429e6453a56b2c162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasicAtkCoolTime: 0
+  BasicAtkCoolTime: 1
+  PlayerAnimator: {fileID: 2777741078009616231}
+  SwordAnimator: {fileID: 6997316060974367271}
+  WeaponAnimator: {fileID: 1083000135607161084}
+  MeleeSize: {x: 1.27, y: 1.27}
+  MeleePos: {fileID: 4932859386229319219}
+  PlayerAtk: 1
 --- !u!114 &7423036033081599277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,11 +322,14 @@ MonoBehaviour:
   PlayerSpeed: 7
   PlayerJumpPower: 10
   JumpCount: 2
-  Pos: {fileID: 8741676486693269871}
-  Radius: 0.34
-  Layer:
+  JumpPos: {fileID: 8741676486693269871}
+  MeleePos: {fileID: 4932859386229319219}
+  JumpSize: 0.34
+  JumpLayer:
     serializedVersion: 2
     m_Bits: 64
+  SwordRenderer: {fileID: 805204193634108829}
+  WeaponRenderer: {fileID: 3325273118797122278}
 --- !u!1 &3984979260503095612
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,7 +340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8741676486693269871}
   m_Layer: 7
-  m_Name: Pos
+  m_Name: JumpPos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,7 +373,7 @@ GameObject:
   - component: {fileID: 805204193634108829}
   - component: {fileID: 6997316060974367271}
   m_Layer: 0
-  m_Name: sword_idle_side-overlay
+  m_Name: SwordHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,7 +456,7 @@ Animator:
   m_GameObject: {fileID: 9108494498185583051}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d027f61906eae76438a0860e6707c267, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

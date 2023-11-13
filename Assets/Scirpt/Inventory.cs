@@ -29,6 +29,7 @@ public class Inventory : MonoBehaviour
     private Vector3 BeginDragCursorPoint; // 드래그 시작 시 커서의 위치
     private List<RaycastResult> RayResult;
     private GraphicRaycaster GraphicRay;
+    private int DragSlotSiblingIndex;
     #endregion // 변수
 
     #region 프로퍼티
@@ -46,6 +47,14 @@ public class Inventory : MonoBehaviour
     {
         Instance = this;
 
+        TryGetComponent(out GraphicRay);
+        if (GraphicRay == null)
+        {
+            GraphicRay = gameObject.AddComponent<GraphicRaycaster>();
+        }
+        PointerEvent = new PointerEventData(EventSystem.current);
+        RayResult = new List<RaycastResult>(10);
+
         // 가로 길이 설정
         InventoryContentGridLayoutGroup = GetComponentInChildren<GridLayoutGroup>();
         HorizontalSlotCount = InventoryContentGridLayoutGroup.constraintCount;
@@ -59,11 +68,11 @@ public class Inventory : MonoBehaviour
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
-        // PointerEvent.position = Input.mousePosition;
+        PointerEvent.position = Input.mousePosition;
 
-        //OnPointerDown();
-        //OnPointerDrag();
-        //OnPointerUp();
+        OnPointerDown();
+        OnPointerDrag();
+        OnPointerUp();
     }
 
     /** 슬롯을 업데이트 한다 */
@@ -132,6 +141,7 @@ public class Inventory : MonoBehaviour
         return IsAddItem;
     }
 
+    /** 레이케스트 첫번째 컴포넌트를 가져온다 */
     private T RaycastAndGetFirstComponent<T>() where T : Component
     {
         RayResult.Clear();
@@ -151,15 +161,18 @@ public class Inventory : MonoBehaviour
     {
         // 왼쪽 클릭을 누르는 순간
         if(Input.GetMouseButtonDown(0))
-        {
+        { 
             BeginDragSlot = RaycastAndGetFirstComponent<ItemSlot>();
 
             // 현재 드래그 시작한 슬롯이 존재하고, 아이템이 있을 경우
-            if(BeginDragSlot != null && BeginDragSlot.HasItem)
+            if (BeginDragSlot != null && BeginDragSlot.HasItem)
             {
-                BeginDragIconTransform = BeginDragSlot.oItemIconImgRect.transform;
+                BeginDragIconTransform = BeginDragSlot.oItemIconImgRect;
                 BeginDragIconPoint = BeginDragIconTransform.position;
                 BeginDragCursorPoint = Input.mousePosition;
+
+                DragSlotSiblingIndex = BeginDragSlot.transform.GetSiblingIndex();
+                BeginDragSlot.transform.SetAsLastSibling();
             }
             else
             {
@@ -186,7 +199,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    /** 클릭을 뗄 경우 */
+    /** 마우스 클릭을 뗄 경우 */
     private void OnPointerUp()
     {
         // 왼쪽 클릭을 눌렀다 때는 순간
@@ -198,12 +211,19 @@ public class Inventory : MonoBehaviour
                 // 원래 위치로
                 BeginDragIconTransform.position = BeginDragIconPoint;
 
-                //EndDrag();
+                BeginDragSlot.transform.SetSiblingIndex(DragSlotSiblingIndex);
+
+                EndDrag();
 
                 BeginDragSlot = null;
                 BeginDragIconTransform = null;
             }
         }
+    }
+
+    private void EndDrag()
+    {
+        ItemSlot EndDragSlot = RaycastAndGetFirstComponent<ItemSlot>();
     }
     #endregion // 함수
 }
