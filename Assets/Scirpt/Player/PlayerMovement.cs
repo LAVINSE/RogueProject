@@ -80,19 +80,19 @@ public class PlayerMovement : MonoBehaviour
     {
         IsGround = Physics2D.OverlapCircle(JumpPos.position, JumpSize, JumpLayer);
 
-        if (IsGround == true && Input.GetKeyDown(KeyCode.C) && JumtCnt > 0)
+        if (IsGround == true && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
         {
             Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
             PlayerAnimator.SetBool("IsJumping", true);
         }
 
-        if (IsGround == false && Input.GetKeyDown(KeyCode.C) && JumtCnt > 0)
+        if (IsGround == false && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
         {
             Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
             PlayerAnimator.SetBool("IsJumping", true);
         }
 
-        if(Input.GetKeyUp(KeyCode.C))
+        if(Input.GetKeyUp(KeySetting.Keys[UserKeyAction.Jump]))
         {
             JumtCnt--;
         }

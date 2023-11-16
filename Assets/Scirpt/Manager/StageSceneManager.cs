@@ -6,14 +6,16 @@ using UnityEngine.Tilemaps;
 public class StageSceneManager : CSceneManager
 {
     #region 변수
-    [SerializeField] private GameObject Player = null;
+    [SerializeField] private GameObject PlayerPrefab = null;
     [SerializeField] private GameObject PlayerSpawnPoint = null;
     [SerializeField] private TilemapRenderer OutLineTileMap = null;
 
+    private bool IsShowInven = false;
+
     private Inventory PlayerInven;
+
     private GameObject InventoryObj;
     private GameObject StateBarObj;
-    private bool IsShowInven = false;
     #endregion // 변수
 
     #region 프로퍼티
@@ -29,12 +31,6 @@ public class StageSceneManager : CSceneManager
         StageSetting();
     }
 
-    /** 초기화 */
-    private void Start()
-    {
-        PlayerInven.oItemList = GameManager.Inst.PlayerItemList;
-    }
-
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
@@ -44,6 +40,8 @@ public class StageSceneManager : CSceneManager
     /** 스테이지 설정 */
     private void StageSetting()
     {
+        var Player = CreatePlayer();
+
         // 플레이어 위치 설정
         Player.transform.position = PlayerSpawnPoint.transform.position;
 
@@ -57,15 +55,15 @@ public class StageSceneManager : CSceneManager
         PlayerInven = InventoryObj.GetComponent<Inventory>();
         this.InventoryObj.SetActive(false);
 
+        // 상태바 생성
         StateBarObj = CreateStateBar().gameObject;
-       
     }
 
     /** 인벤토리를 활성화/비활성화 한다 */
     private void ShowInven()
     {
         // I 키를 눌렀을 경우
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Inventory]))
         {
             // 인벤토리 슬롯 업데이트
             PlayerInven.UpdateSlot();

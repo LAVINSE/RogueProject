@@ -57,7 +57,7 @@ public class EnemySetting : MonoBehaviour
             Instantiate(Drop.ItemPrefab, this.transform.position, Quaternion.identity);   
         }
         
-        GameManager.Inst.PoolManager.DeSpawnObj<EnemySetting>(this.gameObject, CompleteDespawn);
+        GameManager.Inst.oPoolManager.DeSpawnObj<EnemySetting>(this.gameObject, CompleteDespawn);
     }
 
     /** 적 비활성화가 완료 되었을 경우 */

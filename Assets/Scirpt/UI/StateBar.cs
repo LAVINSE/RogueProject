@@ -10,6 +10,12 @@ public class StateBar : MonoBehaviour
     #region 변수
     [SerializeField] private List<Image> SKillImgList = new List<Image>();
     [SerializeField] private List<TMP_Text> SkillCoolTextList = new List<TMP_Text>();
+
+    [SerializeField] private Image HpBarImg = null;
+    [SerializeField] private Image ManaBarImg = null;
+    [SerializeField] private Image UserImg = null;
+
+    [SerializeField] private TMP_Text LevelText = null;
     #endregion // 변수
 
     #region 프로퍼티
@@ -51,6 +57,16 @@ public class StateBar : MonoBehaviour
         }
 
         GameManager.Inst.IsBasicAttack = true;
+    }
+
+    /** 상태바 세팅 */
+    public void UpdateStateBar(float PlayerMaxHp, float PlayerCurrentHp,
+        float PlayerMaxMana, float PlayerCurrentMana, int PlayerLevel, SpriteRenderer PlayerSprite)
+    {
+        HpBarImg.fillAmount = PlayerCurrentHp / PlayerMaxHp;
+        ManaBarImg.fillAmount = PlayerCurrentMana / PlayerMaxMana;
+        LevelText.text = PlayerLevel.ToString();
+        UserImg.sprite = PlayerSprite.sprite;
     }
     #endregion // 함수
 }

@@ -300,13 +300,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7302257c0a5125a429e6453a56b2c162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BasicAtkCoolTime: 1
   PlayerAnimator: {fileID: 2777741078009616231}
   SwordAnimator: {fileID: 6997316060974367271}
   WeaponAnimator: {fileID: 1083000135607161084}
   MeleeSize: {x: 1.27, y: 1.27}
   MeleePos: {fileID: 4932859386229319219}
-  PlayerAtk: 1
+  PlayerAtk: 0
+  PlayerBasicAtkCoolTime: 0
 --- !u!114 &7423036033081599277
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -90,7 +90,7 @@ public class EnemySpawnerManager : MonoBehaviour
     /** 적 오브텍트 풀링 */
     private EnemySetting EnemyObjectPool(EnemyTable EnemyTableScript, GameObject EnemyRoot)
     {
-        var Enemy = GameManager.Inst.PoolManager.SpawnObj<EnemySetting>(() =>
+        var Enemy = GameManager.Inst.oPoolManager.SpawnObj<EnemySetting>(() =>
         {
             return CFactory.CreateCloneObj(EnemyTableScript.oEnemyType.ToString(), EnemyTableScript.EnemyPrefab,
                 EnemyRoot, Vector3.zero, Vector3.one, Vector3.zero);

@@ -23,6 +23,12 @@ public class CameraManager : MonoBehaviour
         CameraWidth = Screen.width * CameraHeight / Screen.height;
     }
 
+    /** 초기화 */
+    private void Start()
+    {
+        FollowingTarget = GameObject.Find("Player").transform;
+    }
+
     /** 초기화 => 상태를 갱신한다 */
     private void LateUpdate()
     {

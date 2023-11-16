@@ -5,15 +5,22 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     #region 변수
-    [SerializeField] private float BasicAtkCoolTime = 0f;
-    [SerializeField] Animator PlayerAnimator;
-    [SerializeField] Animator SwordAnimator;
-    [SerializeField] Animator WeaponAnimator;
+    [SerializeField] private Animator PlayerAnimator;
+    [SerializeField] private Animator SwordAnimator;
+    [SerializeField] private Animator WeaponAnimator;
     [SerializeField] private Vector2 MeleeSize;
     [SerializeField] private Transform MeleePos;
-    [SerializeField] private float PlayerAtk;
 
-    private float BasicAtkCurrentTime;
+    [Header("=====> 플레이어 정보 <=====")]
+    [SerializeField] private float PlayerMaxHp = 0f;
+    [SerializeField] private float PlayerCurrentHp = 0f;
+    [SerializeField] private float PlayerMaxMana = 0f;
+    [SerializeField] private float PlayerCurrentMana = 0f;
+    [SerializeField] private float PlayerAtk =0f;
+    [SerializeField] private float PlayerBasicAtkCoolTime =0f;
+    [SerializeField] private int PlayerLevel = 0;
+
+    private SpriteRenderer PlayerSprite;
     #endregion // 변수
 
     #region 함수
@@ -24,9 +31,28 @@ public class Player : MonoBehaviour
         Gizmos.DrawWireCube(MeleePos.position, MeleeSize);
     }
 
+    /** 초기화 */
+    private void Awake()
+    {
+        PlayerSprite = GetComponent<SpriteRenderer>();
+        SettingPlayerData();
+    }
+
+    /** 초기화 */
+    private void Start()
+    {
+        PlayerCurrentHp = PlayerMaxHp;
+        PlayerCurrentMana = PlayerMaxMana;
+    }
+
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
+        // 상태바 업데이트
+        StateBar.Instance.UpdateStateBar(PlayerMaxHp, PlayerCurrentHp, PlayerMaxMana,
+            PlayerCurrentMana,PlayerLevel, PlayerSprite);
+
+        // 기본공격
         BasicAtk();
     }
 
@@ -39,7 +65,7 @@ public class Player : MonoBehaviour
             ItemAdd GetItem = collision.gameObject.GetComponent<ItemAdd>();
 
             // Z 키를 눌렀을 때, 아이템이 존재 할때
-            if (Input.GetKey(KeyCode.Z) && GetItem != null)
+            if (Input.GetKey(KeySetting.Keys[UserKeyAction.PickUp]) && GetItem != null)
             {
                 ItemInfoTable Item = GetItem.ItemAdd();
                 var AddItem = Inventory.Instance.AddItem(Item);
@@ -53,14 +79,27 @@ public class Player : MonoBehaviour
         }
     }
 
+    /** 플레이어 저장된 데이터 세팅 */
+    private void SettingPlayerData()
+    {
+        PlayerMaxHp = GameManager.Inst.oPlayerMaxHp;
+        PlayerMaxMana = GameManager.Inst.oPlayerMaxMana;
+        PlayerLevel = GameManager.Inst.oPlayerLevel;
+        PlayerAtk = GameManager.Inst.oPlayerAtk;
+        PlayerBasicAtkCoolTime = GameManager.Inst.oPlayerBasicAtkCoolTime;
+    }
+
+    /** 플레이어 기본 공격 */
     private void BasicAtk()
     {
-        // 쿨타임
-        if (BasicAtkCurrentTime <= 0)
+        // 공격 준비 상태가 되었을 경우
+        if (GameManager.Inst.IsBasicAttack == true)
         {
             // Q 키를 눌렀을 때
-            if(Input.GetKey(KeyCode.Q))
+            if (Input.GetKey(KeySetting.Keys[UserKeyAction.Skill_Q]))
             {
+                GameManager.Inst.IsBasicAttack = false;
+
                 Collider2D[] Collider2DList = Physics2D.OverlapBoxAll(MeleePos.position, MeleeSize, 0);
                 foreach(Collider2D Collider in Collider2DList)
                 {
@@ -76,12 +115,9 @@ public class Player : MonoBehaviour
                 WeaponAnimator.SetTrigger("Attack");
                 SwordAnimator.SetTrigger("Attack");
 
-                BasicAtkCurrentTime = BasicAtkCoolTime;
+                // 쿨타임 실행
+                StartCoroutine(StateBar.Instance.CheckCoolTime(0, PlayerBasicAtkCoolTime));
             }
-        }
-        else
-        {
-            BasicAtkCurrentTime -= Time.deltaTime;
         }
     }
     #endregion // 함수

@@ -10,6 +10,7 @@ public class CSceneManager : MonoBehaviour
     #region 프로퍼티
     public GameObject InventoryRoot { get; private set; }
     public GameObject PublicRoot { get; private set; }
+    public GameObject Object { get; private set; }
     #endregion // 프로퍼티
 
     #region 함수 
@@ -20,6 +21,8 @@ public class CSceneManager : MonoBehaviour
 
         for(int i =0; i < RootObjs.Length; i++)
         {
+            this.Object = this.Object ??
+                RootObjs[i].transform.Find("Object")?.gameObject;
             this.InventoryRoot = this.InventoryRoot ??
                 RootObjs[i].transform.Find("Canvas/InventoryRoot")?.gameObject;
             this.PublicRoot = this.PublicRoot ??
@@ -45,11 +48,22 @@ public class CSceneManager : MonoBehaviour
             Vector3.zero, Vector3.one, Vector3.zero);
 
         var StateRect = StateBar.GetComponent<RectTransform>();
-        StateRect.anchorMin = new Vector2(0, 0);
-        StateRect.anchorMax = new Vector2(0, 0);
-        StateRect.pivot = Vector3.zero;
+        StateRect.anchorMin = new Vector2(0, 1);
+        StateRect.anchorMax = new Vector2(0, 1);
+        StateRect.pivot = new Vector2(0, 1);
+
+        
 
         return StateBar;
+    }
+
+    /** 플레이어를 생성한다 */
+    public GameObject CreatePlayer()
+    {
+        var Player = CFactory.CreateCloneObj("Player", Resources.Load<GameObject>("Prefabs/Player/Player"),
+            Object, Vector3.zero, Vector3.one, Vector3.zero);
+
+        return Player;
     }
     #endregion // 함수
 }
