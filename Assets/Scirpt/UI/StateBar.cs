@@ -10,6 +10,7 @@ public class StateBar : MonoBehaviour
     #region 변수
     [SerializeField] private List<Image> SKillImgList = new List<Image>();
     [SerializeField] private List<TMP_Text> SkillCoolTextList = new List<TMP_Text>();
+    [SerializeField] private List<TMP_Text> SkillKeyTextList = new List<TMP_Text>();
 
     [SerializeField] private Image HpBarImg = null;
     [SerializeField] private Image ManaBarImg = null;
@@ -32,7 +33,7 @@ public class StateBar : MonoBehaviour
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
-
+        
     }
 
     /** 쿨타임을 체크한다 */
@@ -67,6 +68,12 @@ public class StateBar : MonoBehaviour
         ManaBarImg.fillAmount = PlayerCurrentMana / PlayerMaxMana;
         LevelText.text = PlayerLevel.ToString();
         UserImg.sprite = PlayerSprite.sprite;
+
+        SkillKeyTextList[0].text = KeySetting.Keys[UserKeyAction.Skill_Q].ToString();
+        SkillKeyTextList[1].text = string.Empty;
+        SkillKeyTextList[2].text = string.Empty;
+        SkillKeyTextList[3].text = string.Empty;
+        SkillKeyTextList[4].text = string.Empty;
     }
     #endregion // 함수
 }

@@ -6,7 +6,6 @@ using UnityEngine.Tilemaps;
 public class StageSceneManager : CSceneManager
 {
     #region 변수
-    [SerializeField] private GameObject PlayerPrefab = null;
     [SerializeField] private GameObject PlayerSpawnPoint = null;
     [SerializeField] private TilemapRenderer OutLineTileMap = null;
 
@@ -16,37 +15,67 @@ public class StageSceneManager : CSceneManager
 
     private GameObject InventoryObj;
     private GameObject StateBarObj;
+    private GameObject PlayerObj;
     #endregion // 변수
 
     #region 프로퍼티
-    public static StageSceneManager Instance { get; private set; }
     #endregion // 프로퍼티
 
     /** 초기화 */
-    public override void Awake()
+    private void Start()
     {
-        base.Awake();
-        Instance = this;
-
+        // 스테이지 설정
         StageSetting();
     }
 
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
+        // 인벤토리를 보여준다
         ShowInven();
+
+        // TODO : 함수로 만들기
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            // 옵션창이 활성화 되어있을 경우
+            if(OptionObj.activeSelf == true)
+            {
+                OptionObj.SetActive(false);
+            }
+            else
+            {
+                OptionObj.SetActive(true);
+            }   
+        }
     }
 
     /** 스테이지 설정 */
     private void StageSetting()
     {
-        var Player = CreatePlayer();
+        // 아웃라인타일맵이 있을 경우
+        if(OutLineTileMap != null)
+        {
+            // 아웃라인타일 렌더러 비활성화
+            OutLineTileMap.enabled = false;
+        }
+
+        // 상태바 생성
+        StateBarObj = CreateStateBar().gameObject;
+
+        // 설정창 생성
+        OptionObj = CreateOptionSetting().gameObject;
+
+        // 옵션버튼 생성
+        CreateOptionButton();
+
+        // 플레이어 생성
+        PlayerObj = CreatePlayer();
 
         // 플레이어 위치 설정
-        Player.transform.position = PlayerSpawnPoint.transform.position;
+        PlayerObj.transform.position = PlayerSpawnPoint.transform.position;
 
-        // 아웃라인타일 렌더러 비활성화
-        OutLineTileMap.enabled = false;
+        // 카메라 설정
+        CameraManager.Instance.oFollowingTarget = PlayerObj.transform;
 
         // 인벤토리 생성
         this.InventoryObj = CreateInventroy().gameObject;
@@ -54,9 +83,6 @@ public class StageSceneManager : CSceneManager
         // 생성된 인벤토리 컴포넌트 가져오기, 비활성화
         PlayerInven = InventoryObj.GetComponent<Inventory>();
         this.InventoryObj.SetActive(false);
-
-        // 상태바 생성
-        StateBarObj = CreateStateBar().gameObject;
     }
 
     /** 인벤토리를 활성화/비활성화 한다 */

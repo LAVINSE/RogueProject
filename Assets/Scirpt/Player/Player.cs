@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     [SerializeField] private int PlayerLevel = 0;
 
     private SpriteRenderer PlayerSprite;
+
+    public NPC oNPC;
     #endregion // 변수
 
     #region 함수
@@ -54,6 +56,19 @@ public class Player : MonoBehaviour
 
         // 기본공격
         BasicAtk();
+
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            IND();
+        }
+    }
+
+    private void IND()
+    {
+        if (oNPC == null)
+            return;
+
+        oNPC.ASD();
     }
 
     /** 초기화 => 접촉중인 상태일때 */
@@ -65,7 +80,7 @@ public class Player : MonoBehaviour
             ItemAdd GetItem = collision.gameObject.GetComponent<ItemAdd>();
 
             // Z 키를 눌렀을 때, 아이템이 존재 할때
-            if (Input.GetKey(KeySetting.Keys[UserKeyAction.PickUp]) && GetItem != null)
+            if (Input.GetKey(KeySetting.Keys[UserKeyAction.Pickup]) && GetItem != null)
             {
                 ItemInfoTable Item = GetItem.ItemAdd();
                 var AddItem = Inventory.Instance.AddItem(Item);

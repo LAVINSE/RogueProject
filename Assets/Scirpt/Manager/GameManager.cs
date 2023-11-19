@@ -57,12 +57,6 @@ public class GameManager : CSingleton<GameManager>
             Vector3.zero, Vector3.one, Vector3.zero);
     }
 
-    /** 초기화 => 상태를 갱신한다 */
-    private void Update()
-    {
-        
-    }
-
     /** 플레이어 데이터를 저장한다 */
     public void PlayerDataSave(float PlayerMaxHp, float PlayerAtk, float PlayerBasicAtkCoolTime)
     {

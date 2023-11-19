@@ -20,6 +20,7 @@ public class Inventory : MonoBehaviour
     [Header("=====> 인스펙터 확인용 <=====")]
     [SerializeField] private ItemSlot[] Slots;
     [SerializeField] private int HorizontalSlotCount = 5;
+    [SerializeField] private GameObject Content;
 
     private GridLayoutGroup InventoryContentGridLayoutGroup;
     private PointerEventData PointerEvent;
@@ -179,8 +180,9 @@ public class Inventory : MonoBehaviour
                 BeginDragIconPoint = BeginDragIconTransform.position;
                 BeginDragCursorPoint = Input.mousePosition;
 
+                BeginDragIconTransform.transform.SetParent(Content.transform);
                 DragSlotSiblingIndex = BeginDragSlot.transform.GetSiblingIndex();
-                BeginDragSlot.transform.SetAsLastSibling();
+                BeginDragIconTransform.transform.SetAsLastSibling();
             }
             else
             {
@@ -217,8 +219,10 @@ public class Inventory : MonoBehaviour
             if (BeginDragSlot != null)
             {
                 // 원래 위치로
-                BeginDragIconTransform.position = BeginDragIconPoint;
 
+                BeginDragIconTransform.transform.SetParent(BeginDragSlot.transform);
+                BeginDragIconTransform.localPosition = Vector3.zero;
+                
                 BeginDragSlot.transform.SetSiblingIndex(DragSlotSiblingIndex);
 
                 EndDrag();
@@ -232,6 +236,17 @@ public class Inventory : MonoBehaviour
     private void EndDrag()
     {
         ItemSlot EndDragSlot = RaycastAndGetFirstComponent<ItemSlot>();
+
+        if(EndDragSlot != null)
+        {
+            if(BeginDragSlot == EndDragSlot)
+            {
+                return;
+            }
+
+            BeginDragSlot.Swap(EndDragSlot);
+        }
     }
+
     #endregion // 함수
 }

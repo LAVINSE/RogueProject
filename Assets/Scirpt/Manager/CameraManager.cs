@@ -5,8 +5,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     #region 변수
-    [Header("=====> 카메라 <=====")]
-    [SerializeField] private Transform FollowingTarget = null;
+    [Header("=====> 카메라 <=====")] 
     [SerializeField] private Vector2 CanMoveAreaCenter = Vector2.zero; // 카메라 이동 가능영역 중심
     [SerializeField] private Vector2 CanMoveAreaSize = Vector2.zero; // 카메라 이동 가능영역 크기
     [SerializeField] private float CameraMoveSpeed = 0.0f; // 카메라 이동 속도
@@ -15,18 +14,18 @@ public class CameraManager : MonoBehaviour
     private float CameraHeight; // 카메라 월드 공간에서의 세로 길이
     #endregion // 변수
 
+    #region 프로퍼티
+    public static CameraManager Instance { get; private set; }
+    public Transform oFollowingTarget { get; set; }
+    #endregion // 프로퍼티
+
     #region 함수
     /** 초기화 */
     private void Awake()
     {
+        Instance = this;
         CameraHeight = Camera.main.orthographicSize;
         CameraWidth = Screen.width * CameraHeight / Screen.height;
-    }
-
-    /** 초기화 */
-    private void Start()
-    {
-        FollowingTarget = GameObject.Find("Player").transform;
     }
 
     /** 초기화 => 상태를 갱신한다 */
@@ -45,8 +44,8 @@ public class CameraManager : MonoBehaviour
     /** 타겟을 추적한다 */
     private void FollowTarget()
     {
-        Vector3 TargetPosition = new Vector3(FollowingTarget.position.x,
-                                            FollowingTarget.position.y,
+        Vector3 TargetPosition = new Vector3(oFollowingTarget.position.x,
+                                            oFollowingTarget.position.y,
                                             -10.0f);
         this.transform.position = Vector3.Lerp(this.transform.position, TargetPosition,
                                                 CameraMoveSpeed * Time.deltaTime);

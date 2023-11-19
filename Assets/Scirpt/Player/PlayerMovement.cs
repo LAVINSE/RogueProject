@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     private bool IsGround;
     #endregion // 변수
 
-
     #region 함수
     /** 확인용 */
     private void OnDrawGizmos()

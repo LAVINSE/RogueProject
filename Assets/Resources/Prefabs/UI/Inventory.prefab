@@ -623,6 +623,7 @@ MonoBehaviour:
   SlotRectTransform: {fileID: 8502542709846739022}
   Slots: []
   HorizontalSlotCount: 5
+  Content: {fileID: 8502542709846739021}
 --- !u!1 &8502542708695178425
 GameObject:
   m_ObjectHideFlags: 0

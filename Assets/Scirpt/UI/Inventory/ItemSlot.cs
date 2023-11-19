@@ -42,7 +42,20 @@ public class ItemSlot : MonoBehaviour
     #region 함수
     private void Awake()
     {
+        ItemIconImg.transform.localScale = Vector3.one * 0.8f;
         ItemIconImgRect = ItemIconImg.rectTransform;
+    }
+
+    /** 교환 */
+    public void Swap(ItemSlot OtherSlot)
+    {
+        if (OtherSlot == null) return;
+        if (OtherSlot == this) return;
+
+        OtherSlot.oItemInfo = this.Item;
+
+        this.oItemInfo = null;
+        this.ItemIconImg.sprite = null;
     }
     #endregion // 함수
 }
