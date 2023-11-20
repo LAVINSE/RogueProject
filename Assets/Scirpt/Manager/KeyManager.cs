@@ -10,6 +10,7 @@ public enum UserKeyAction
     Jump = 0, // C
     Pickup, // Z
     Inventory, // I
+    Interaction, // F
     Skill_Q, // Q
     KeyCount,
 }
@@ -23,6 +24,7 @@ public class KeyManager : CSingleton<KeyManager>
         KeyCode.C,
         KeyCode.Z,
         KeyCode.I,
+        KeyCode.F,
         KeyCode.Q,
     };
     #endregion // 기본 키 세팅

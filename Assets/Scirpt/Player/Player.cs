@@ -57,18 +57,8 @@ public class Player : MonoBehaviour
         // 기본공격
         BasicAtk();
 
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            IND();
-        }
-    }
-
-    private void IND()
-    {
-        if (oNPC == null)
-            return;
-
-        oNPC.ASD();
+        // 상호작용 키
+        SettingInteractionKey();
     }
 
     /** 초기화 => 접촉중인 상태일때 */
@@ -102,6 +92,29 @@ public class Player : MonoBehaviour
         PlayerLevel = GameManager.Inst.oPlayerLevel;
         PlayerAtk = GameManager.Inst.oPlayerAtk;
         PlayerBasicAtkCoolTime = GameManager.Inst.oPlayerBasicAtkCoolTime;
+    }
+
+    /** 상호작용 키를 설정한다 */
+    private void SettingInteractionKey()
+    {
+        // F키를 눌를 경우
+        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Interaction]))
+        {
+            Interaction();
+        }
+    }
+
+    /** 접촉한 대상과 상호작용을 한다 */
+    private void Interaction()
+    {
+        // 대상 정보가 없을 경우
+        if (oNPC == null)
+        {
+            return;
+        }
+        
+        // NPC 상호작용
+        oNPC.NPCInteraction();
     }
 
     /** 플레이어 기본 공격 */
