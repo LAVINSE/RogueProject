@@ -13,11 +13,17 @@ public class NPC : MonoBehaviour
     }
 
     #region 변수
+    [Header("=====> NPC 설정 <=====")]
     [SerializeField] private NPCType Type = NPCType.None;
+    [SerializeField] private WeightDropTable ItemTable = null;
+
+    [Header("=====> 패널 설정 <=====")]
     [SerializeField] private GameObject InteractionPanel = null;
     [SerializeField] private TMP_Text InteractionText = null;
+    
 
     private Player PlayerData;
+    private GameObject ShopObj;
     #endregion // 변수
 
     #region 함수
@@ -28,6 +34,8 @@ public class NPC : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             PlayerData = collision.gameObject.GetComponent<Player>();
+            
+            // 패널 보여주기
             ShowInteractionPanel();
 
             // 플레이어 데이터가 있을 경우
@@ -43,7 +51,16 @@ public class NPC : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            // 패널 닫기
             ShowInteractionPanel();
+
+            // 상점이 있을 경우
+            if(ShopObj != null)
+            {
+                // 상점 닫기
+                ShopObj.SetActive(false);
+            }
+            
             // 플레이어 데이터가 있을 경우
             if (PlayerData != null )
             {
@@ -69,8 +86,50 @@ public class NPC : MonoBehaviour
     // NPC 상호작용
     public void NPCInteraction()
     {
-        // switch문으로 관리 or if문
-        Debug.Log("asdf");
+        switch(Type)
+        {
+            case NPCType.None:
+                Debug.Log("a");
+                break;
+            case NPCType.ShopNPC:
+                // 상점 열기
+                ShowShop();
+                break;
+            case NPCType.StageNPC:
+                Debug.Log("a");
+                break;
+        }
+    }
+
+    /** 상점을 보여준다 */
+    private void ShowShop()
+    {
+        // 아이템테이블이 없을경우
+        if (ItemTable == null)
+        {
+            return;
+        }
+
+        var ShopComponent = CSceneManager.Instance.PublicRoot.GetComponentInChildren<Shop>(true);
+
+        // Shop이 없을 경우
+        if (ShopComponent == null)
+        {
+            ShopObj = CSceneManager.Instance.CreateShop().gameObject;
+            ShopObj.GetComponent<Shop>().SettingShop(ItemTable);
+            ShopObj.SetActive(true);
+        }
+        else
+        {
+            if (ShopObj.activeSelf == true)
+            {
+                ShopObj.SetActive(false);
+            }
+            else
+            {
+                ShopObj.SetActive(true);
+            }
+        }
     }
     #endregion // 함수
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -21,9 +19,12 @@ public class Player : MonoBehaviour
     [SerializeField] private int PlayerLevel = 0;
 
     private SpriteRenderer PlayerSprite;
-
-    public NPC oNPC;
     #endregion // 변수
+
+    #region 프로퍼티 
+    public int oPlayerCurrentGold { get; set; }
+    public NPC oNPC { get; set; }
+    #endregion // 프로퍼티
 
     #region 함수
     /** 확인용 */
@@ -52,7 +53,7 @@ public class Player : MonoBehaviour
     {
         // 상태바 업데이트
         StateBar.Instance.UpdateStateBar(PlayerMaxHp, PlayerCurrentHp, PlayerMaxMana,
-            PlayerCurrentMana,PlayerLevel, PlayerSprite);
+            PlayerCurrentMana, oPlayerCurrentGold, PlayerLevel, PlayerSprite);
 
         // 기본공격
         BasicAtk();
@@ -90,6 +91,7 @@ public class Player : MonoBehaviour
         PlayerMaxHp = GameManager.Inst.oPlayerMaxHp;
         PlayerMaxMana = GameManager.Inst.oPlayerMaxMana;
         PlayerLevel = GameManager.Inst.oPlayerLevel;
+        oPlayerCurrentGold = GameManager.Inst.oPlayerGold;
         PlayerAtk = GameManager.Inst.oPlayerAtk;
         PlayerBasicAtkCoolTime = GameManager.Inst.oPlayerBasicAtkCoolTime;
     }

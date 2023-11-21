@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BodyArmor
   m_EditorClassIdentifier: 
   ItemName: BodyArmor
+  ItemPrice: 5
   ItemType: 2
   ItemImage: {fileID: 21300000, guid: 603e026921ee6c44ab5c48b149bb31e9, type: 3}
   ItemPrefab: {fileID: 8749369612634338527, guid: 6f7246c531a65004d80ed24b45f8a25c, type: 3}

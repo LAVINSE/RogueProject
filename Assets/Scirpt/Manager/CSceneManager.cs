@@ -15,6 +15,7 @@ public class CSceneManager : MonoBehaviour
     public GameObject PlayerRoot { get; private set; }
 
     public GameObject OptionObj { get; set; }
+    public GameObject PlayerObj { get; set; }
     #endregion // 프로퍼티
 
     #region 함수 
@@ -87,6 +88,18 @@ public class CSceneManager : MonoBehaviour
         ButtonRect.pivot = new Vector2(1, 1);
 
         return Button;
+    }
+
+    /** 상점을 생성한다 */
+    public Shop CreateShop()
+    {
+        var ShopObj = CFactory.CreateCloneObj<Shop>("Shop",
+            Resources.Load<GameObject>("Prefabs/UI/Shop"), PublicRoot,
+            Vector3.zero, Vector3.one, Vector3.zero);
+
+        ShopObj.gameObject.SetActive(false);
+
+        return ShopObj;
     }
 
     /** 플레이어를 생성한다 */

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ItemSlot : MonoBehaviour
 {
     #region 변수
-    [SerializeField] private Image SlotImg;
     [SerializeField] private Image ItemIconImg;
 
     private ItemInfoTable Item;

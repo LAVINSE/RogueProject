@@ -15,7 +15,6 @@ public class StageSceneManager : CSceneManager
 
     private GameObject InventoryObj;
     private GameObject StateBarObj;
-    private GameObject PlayerObj;
     #endregion // 변수
 
     #region 프로퍼티

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b71def17bc29c914a8f6c989b8bc7bbc, type: 3}
+  m_Name: ShopItemDrop
+  m_EditorClassIdentifier: 
+  Total: 120
+  DropTableList:
+  - ItemTable: {fileID: 11400000, guid: 0649c4e98e9520f4c972af26c93b2ea4, type: 2}
+    Weight: 20
+  - ItemTable: {fileID: 11400000, guid: a121165c8db80644881337a79da39463, type: 2}
+    Weight: 20
+  - ItemTable: {fileID: 11400000, guid: 705a9e4e1537f714cb49371df9f960ea, type: 2}
+    Weight: 20
+  - ItemTable: {fileID: 11400000, guid: 0a0498a234257ea4b8fce30901e2f62d, type: 2}
+    Weight: 20
+  - ItemTable: {fileID: 11400000, guid: 35ff50c0e5ed79c4db7cc4a6715aea39, type: 2}
+    Weight: 20
+  - ItemTable: {fileID: 0}
+    Weight: 20

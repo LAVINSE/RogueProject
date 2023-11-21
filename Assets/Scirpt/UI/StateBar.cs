@@ -17,6 +17,7 @@ public class StateBar : MonoBehaviour
     [SerializeField] private Image UserImg = null;
 
     [SerializeField] private TMP_Text LevelText = null;
+    [SerializeField] private TMP_Text PlayerGoldText = null;
     #endregion // 변수
 
     #region 프로퍼티
@@ -62,11 +63,13 @@ public class StateBar : MonoBehaviour
 
     /** 상태바 세팅 */
     public void UpdateStateBar(float PlayerMaxHp, float PlayerCurrentHp,
-        float PlayerMaxMana, float PlayerCurrentMana, int PlayerLevel, SpriteRenderer PlayerSprite)
+        float PlayerMaxMana, float PlayerCurrentMana, int PlayerCurrentGold,
+        int PlayerLevel, SpriteRenderer PlayerSprite)
     {
         HpBarImg.fillAmount = PlayerCurrentHp / PlayerMaxHp;
         ManaBarImg.fillAmount = PlayerCurrentMana / PlayerMaxMana;
         LevelText.text = PlayerLevel.ToString();
+        PlayerGoldText.text = $"골드 : {PlayerCurrentGold}";
         UserImg.sprite = PlayerSprite.sprite;
 
         SkillKeyTextList[0].text = KeySetting.Keys[UserKeyAction.Skill_Q].ToString();

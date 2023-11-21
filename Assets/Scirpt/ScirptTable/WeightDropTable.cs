@@ -39,12 +39,11 @@ public class WeightDropTable : ScriptableObject
     public ItemInfoTable ItemDrop()
     {
         var ItemPick = PickItem();
-        /*
+        
         if (ItemPick == null)
         {
             return null;
-        }
-        */
+        }    
 
         return ItemPick;
     }

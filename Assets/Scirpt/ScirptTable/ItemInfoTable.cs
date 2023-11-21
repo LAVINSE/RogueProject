@@ -14,6 +14,7 @@ public class ItemInfoTable : ScriptableObject
 
     [Header("=====> 아이템 정보 <=====")]
     public string ItemName;
+    public int ItemPrice;
     public eItemType ItemType = eItemType.None;
     public Sprite ItemImage;
 

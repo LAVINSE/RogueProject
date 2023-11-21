@@ -7,8 +7,9 @@ public class GameManager : CSingleton<GameManager>
     #region 변수
     [SerializeField] private float PlayerMaxHp = 0f;
     [SerializeField] private float PlayerMaxMana = 0f;
-    [SerializeField] private int PlayerLevel = 0;
     [SerializeField] private float PlayerAtk = 0f;
+    [SerializeField] private int PlayerGold = 0;
+    [SerializeField] private int PlayerLevel = 0;
     [SerializeField] private float PlayerBasicAtkCoolTime = 0f;
     #endregion // 변수
 
@@ -17,6 +18,13 @@ public class GameManager : CSingleton<GameManager>
     public List<ItemInfoTable> oPlayerItemList = new List<ItemInfoTable>();
 
     public bool IsBasicAttack { get; set; } = true;
+
+    public int oPlayerGold
+    {
+        get => PlayerGold;
+        set => PlayerGold = Mathf.Max(0, value);
+
+    }
 
     public int oPlayerLevel
     {

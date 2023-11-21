@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e988863207179db46a9d1694716e9216, type: 3}
-  m_Name: Belt
+  m_Name: BodyArmor 3
   m_EditorClassIdentifier: 
-  ItemName: Belt
-  ItemPrice: 1
+  ItemName: BodyArmor
+  ItemPrice: 4
   ItemType: 2
-  ItemImage: {fileID: 21300000, guid: 839905316b03ebe4e81724e502fe964c, type: 3}
-  ItemPrefab: {fileID: 8749369612634338527, guid: 86ac299affa2a3148a67c22849349068, type: 3}
+  ItemImage: {fileID: 21300000, guid: 7e03ed8b653ed2845aadb9ea3b7519c0, type: 3}
+  ItemPrefab: {fileID: 8749369612634338527, guid: d5a1a72863014af4da34e9c5ccd28cb8, type: 3}

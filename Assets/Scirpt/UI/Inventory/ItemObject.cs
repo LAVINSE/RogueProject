@@ -28,9 +28,10 @@ public class ItemObject : MonoBehaviour, ItemAdd
         SettingItem();
     }
 
+    /** 초기화 => 처음 접촉했을 때 */
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Map"))
+        if (collision.gameObject.CompareTag("Map"))
         {
             Rigid.bodyType = RigidbodyType2D.Kinematic;
             BoxCollider.isTrigger = true;
