@@ -15,7 +15,7 @@ public class NPC : MonoBehaviour
     #region 변수
     [Header("=====> NPC 설정 <=====")]
     [SerializeField] private NPCType Type = NPCType.None;
-    [SerializeField] private WeightDropTable ItemTable = null;
+    [Tooltip(" 상점 NPC만 사용함 ")][SerializeField] private WeightDropTable ItemTable = null;
 
     [Header("=====> 패널 설정 <=====")]
     [SerializeField] private GameObject InteractionPanel = null;
@@ -24,6 +24,7 @@ public class NPC : MonoBehaviour
 
     private Player PlayerData;
     private GameObject ShopObj;
+    private GameObject DungeonPopupObj;
     #endregion // 변수
 
     #region 함수
@@ -96,7 +97,7 @@ public class NPC : MonoBehaviour
                 ShowShop();
                 break;
             case NPCType.StageNPC:
-                Debug.Log("a");
+                ShowDungeonPopup();
                 break;
         }
     }
@@ -128,6 +129,29 @@ public class NPC : MonoBehaviour
             else
             {
                 ShopObj.SetActive(true);
+            }
+        }
+    }
+
+    /** 던전 입장 팝업을 보여준다 */
+    private void ShowDungeonPopup()
+    {
+        var PopupComponent = CSceneManager.Instance.PublicRoot.GetComponentInChildren<DungeonPopup>(true);
+
+        if(PopupComponent == null)
+        {
+            DungeonPopupObj = CSceneManager.Instance.CreateDungeonPopup().gameObject;
+            DungeonPopupObj.SetActive(true);
+        }
+        else
+        {
+            if (DungeonPopupObj.activeSelf == true)
+            {
+                DungeonPopupObj.SetActive(false);
+            }
+            else
+            {
+                DungeonPopupObj.SetActive(true);
             }
         }
     }

@@ -25,30 +25,27 @@ public class GameManager : CSingleton<GameManager>
         set => PlayerGold = Mathf.Max(0, value);
 
     }
-
     public int oPlayerLevel
     {
         get => PlayerLevel;
         set => PlayerLevel = Mathf.Max(0,value);
     }
-
     public float oPlayerMaxMana
     {
         get => PlayerMaxMana;
         set => PlayerMaxMana = Mathf.Max(0, value);
     }
-
     public float oPlayerMaxHp
     { 
         get => PlayerMaxHp;
         set => PlayerMaxHp = Mathf.Max(0, value);
     }
-
     public float oPlayerAtk
     {
         get => PlayerAtk;
         set => PlayerAtk = Mathf.Max(0, value);
     }
+
     public float oPlayerBasicAtkCoolTime
     {
         get => PlayerBasicAtkCoolTime;
@@ -71,6 +68,12 @@ public class GameManager : CSingleton<GameManager>
         oPlayerAtk = PlayerAtk;
         oPlayerBasicAtkCoolTime = PlayerBasicAtkCoolTime;
         oPlayerMaxHp = PlayerMaxHp;
+    }
+
+    /** 씬을 변경한다 */
+    public void ChangeScene(string SceneName)
+    {
+        LoadingScene.LoadScene(SceneName);
     }
     #endregion // 함수
 }

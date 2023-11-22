@@ -352,6 +352,7 @@ GameObject:
   - component: {fileID: 8182669835446773657}
   - component: {fileID: 238865478872002821}
   - component: {fileID: 3636411983480686509}
+  - component: {fileID: 1696337777350207717}
   m_Layer: 8
   m_Name: Enemy_3
   m_TagString: Enemy
@@ -479,3 +480,15 @@ MonoBehaviour:
   EnemyAtk: 0
   EnemyDrop: {fileID: 11400000, guid: 2f2ac52f6d9c6754abcc7eade71688d5, type: 2}
   oEnemyTable: {fileID: 0}
+--- !u!114 &1696337777350207717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991401981467936336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2956d97a13037bb45b192241664b1027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -15,6 +15,8 @@ public class CSceneManager : MonoBehaviour
     public GameObject PlayerRoot { get; private set; }
 
     public GameObject OptionObj { get; set; }
+
+    // 아직 사용안함
     public GameObject PlayerObj { get; set; }
     #endregion // 프로퍼티
 
@@ -100,6 +102,18 @@ public class CSceneManager : MonoBehaviour
         ShopObj.gameObject.SetActive(false);
 
         return ShopObj;
+    }
+
+    /** 던전 입장 팝업을 생성한다 */
+    public DungeonPopup CreateDungeonPopup()
+    {
+        var Popup = CFactory.CreateCloneObj<DungeonPopup>("DungeonPopup",
+            Resources.Load<GameObject>("Prefabs/UI/DungeonPopup"), PublicRoot,
+            Vector3.zero, Vector3.one, Vector3.zero);
+
+        Popup.gameObject.SetActive(false);
+
+        return Popup;
     }
 
     /** 플레이어를 생성한다 */

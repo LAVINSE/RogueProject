@@ -8,6 +8,7 @@ public class EnemySetting : MonoBehaviour
     #region 변수
     [Header("=====> 적 정보 <=====")]
     [SerializeField] private EnemyTable.EnemyType oEnemyType;
+    [SerializeField] private float EnemyMaxHp = 0.0f;
     [SerializeField] private float EnemyHp = 0.0f;
     [SerializeField] private float EnemyAtk = 0.0f;
 
@@ -18,7 +19,16 @@ public class EnemySetting : MonoBehaviour
     [SerializeField] private EnemyTable oEnemyTable;
     #endregion // 변수
 
+    #region 프로퍼티
+    public EnemyState oEnemyState { get; set; }
+    #endregion // 프로퍼티
+
     #region 함수
+    private void Awake()
+    {
+        oEnemyState = GetComponent<EnemyState>();
+    }
+
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
@@ -33,15 +43,38 @@ public class EnemySetting : MonoBehaviour
     {
         this.oEnemyTable = EnemyScriptTable;
         this.oEnemyType = this.oEnemyTable.oEnemyType;
-        this.EnemyHp = this.oEnemyTable.EnemyHp;
+        this.EnemyMaxHp = this.oEnemyTable.EnemyHp;
         this.EnemyAtk = this.oEnemyTable.EnemyAtk;
+
+        EnemyHp = this.EnemyMaxHp;
     }
 
-    /** 데미지를 받는다 */
-    public void TakeDamage(float Damage)
+    /** 타격을 받는다 */
+    public void TakeDamageOnHit(float Damage)
     {
+        // 적이 죽었는지 확인하고
+        // 안 죽었으면, 데미지를 받고, 적이 죽었는지 확인하고, 아닐경우 HIt State실행
         // 피격 모션 추가예정
-        EnemyHp -= Damage;
+
+        if (EnemyIsDie() == false)
+        {
+            EnemyHp -= Damage;
+
+            if(EnemyIsDie() == true)
+            {
+                oEnemyState.ChangeState(EnemyState.EnemyStateType.Dead);
+            }
+            else
+            {
+                oEnemyState.ChangeState(EnemyState.EnemyStateType.Hit);
+            }
+        }
+    }
+
+    /** 적이 죽었는지 검사한다 */
+    public bool EnemyIsDie()
+    {
+        return this.EnemyHp <= 0.0f;
     }
 
     /** 적이 죽었을 때 */

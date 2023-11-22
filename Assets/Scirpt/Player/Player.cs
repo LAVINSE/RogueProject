@@ -136,7 +136,7 @@ public class Player : MonoBehaviour
                     if(Collider.gameObject.CompareTag("Enemy"))
                     {
                         var Enemy = Collider.GetComponent<EnemySetting>();
-                        Enemy.TakeDamage(PlayerAtk);
+                        Enemy.TakeDamageOnHit(PlayerAtk);
                     }
                 }
 
