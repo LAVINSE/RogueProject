@@ -3,13 +3,18 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     #region 변수
+    [Header("=====> 애니메이션 <=====")]
     [SerializeField] private Animator PlayerAnimator;
     [SerializeField] private Animator SwordAnimator;
     [SerializeField] private Animator WeaponAnimator;
-    [SerializeField] private Vector2 MeleeSize;
-    [SerializeField] private Transform MeleePos;
+
+    [Header("=====> 기본공격 설정 <=====")]
+    [Space]
+    [SerializeField] private Vector2 MeleeSize; // 공격 범위
+    [SerializeField] private Transform MeleePos; // 공격이 나가는 위치
 
     [Header("=====> 플레이어 정보 <=====")]
+    [Space]
     [SerializeField] private float PlayerMaxHp = 0f;
     [SerializeField] private float PlayerCurrentHp = 0f;
     [SerializeField] private float PlayerMaxMana = 0f;
@@ -53,7 +58,8 @@ public class Player : MonoBehaviour
     {
         // 상태바 업데이트
         StateBar.Instance.UpdateStateBar(PlayerMaxHp, PlayerCurrentHp, PlayerMaxMana,
-            PlayerCurrentMana, oPlayerCurrentGold, PlayerLevel, PlayerSprite);
+            PlayerCurrentMana, oPlayerCurrentGold, PlayerLevel, PlayerAtk,PlayerBasicAtkCoolTime,
+            PlayerSprite);
 
         // 기본공격
         BasicAtk();
@@ -73,6 +79,7 @@ public class Player : MonoBehaviour
             // Z 키를 눌렀을 때, 아이템이 존재 할때
             if (Input.GetKey(KeySetting.Keys[UserKeyAction.Pickup]) && GetItem != null)
             {
+                AudioManager.Inst.PlaySFX(SFXEnum.PickItem);
                 ItemInfoTable Item = GetItem.ItemAdd();
                 var AddItem = Inventory.Instance.AddItem(Item);
 
@@ -100,7 +107,7 @@ public class Player : MonoBehaviour
     private void SettingInteractionKey()
     {
         // F키를 눌를 경우
-        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Interaction]))
+        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Interaction]) && CSceneManager.Instance.OptionObj.activeSelf == false)
         {
             Interaction();
         }
@@ -129,6 +136,11 @@ public class Player : MonoBehaviour
             if (Input.GetKey(KeySetting.Keys[UserKeyAction.Skill_Q]))
             {
                 GameManager.Inst.IsBasicAttack = false;
+                AudioManager.Inst.PlaySFX(SFXEnum.BasicAttack);
+                // 공격
+                PlayerAnimator.SetTrigger("Attack");
+                WeaponAnimator.SetTrigger("Attack");
+                SwordAnimator.SetTrigger("Attack");
 
                 Collider2D[] Collider2DList = Physics2D.OverlapBoxAll(MeleePos.position, MeleeSize, 0);
                 foreach(Collider2D Collider in Collider2DList)
@@ -140,15 +152,16 @@ public class Player : MonoBehaviour
                     }
                 }
 
-                // 공격
-                PlayerAnimator.SetTrigger("Attack");
-                WeaponAnimator.SetTrigger("Attack");
-                SwordAnimator.SetTrigger("Attack");
-
                 // 쿨타임 실행
                 StartCoroutine(StateBar.Instance.CheckCoolTime(0, PlayerBasicAtkCoolTime));
             }
         }
+    }
+
+    /** 타격을 받는다 */
+    public void TakeDamage(float Damage)
+    {
+        PlayerCurrentHp -= Damage;
     }
     #endregion // 함수
 }

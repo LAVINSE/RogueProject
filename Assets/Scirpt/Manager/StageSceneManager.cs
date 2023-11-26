@@ -88,7 +88,7 @@ public class StageSceneManager : CSceneManager
     private void ShowInven()
     {
         // I 키를 눌렀을 경우
-        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Inventory]))
+        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Inventory]) && CSceneManager.Instance.OptionObj.activeSelf == false)
         {
             // 인벤토리 슬롯 업데이트
             PlayerInven.UpdateSlot();

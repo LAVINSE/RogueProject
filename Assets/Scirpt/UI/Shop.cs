@@ -16,6 +16,7 @@ public class Shop : MonoBehaviour
 
     [Space]
     [SerializeField] private TMP_Text PlayerGoldText;
+    [SerializeField] private Button CancelButton;
 
     [Space]
     [Header("=====> 인스펙터 확인용 <=====")]
@@ -25,11 +26,6 @@ public class Shop : MonoBehaviour
     #endregion // 변수
 
     #region 프로퍼티
-    private WeightDropTable oDropTable
-    {
-        get => DropTable;
-        set => DropTable = value;
-    }
     #endregion // 프로퍼티
 
     #region 함수
@@ -37,6 +33,11 @@ public class Shop : MonoBehaviour
     private void Awake()
     {
         PlayerComponent = CSceneManager.Instance.PlayerObj.GetComponent<Player>();
+
+        CancelButton.onClick.AddListener(() =>
+        {
+            this.gameObject.SetActive(false);
+        });
     }
 
     /** 초기화 */
@@ -45,7 +46,16 @@ public class Shop : MonoBehaviour
         // 상점이 활성화 상태일 경우
         if(this.gameObject.activeSelf == true)
         {
-            PlayerGoldText.text = PlayerComponent.oPlayerCurrentGold.ToString();
+            PlayerGoldText.text = "골드 : " + PlayerComponent.oPlayerCurrentGold.ToString();
+
+            for(int i = 0; i< ItemImgList.Count; i++)
+            {
+                if (ItemButtonList[i].interactable == false)
+                {
+                    ItemNameList[i].text = "Sold Out";
+                    // TODO : 이미지 교체
+                }
+            }
         }
     }
 
@@ -56,6 +66,7 @@ public class Shop : MonoBehaviour
 
         for (int i = 0; i< ItemImgList.Count; i++)
         {
+            int Index = i;
             var Drop = DropTable.ItemDrop();
 
             // 드랍 아이템이 있을 경우
@@ -63,11 +74,10 @@ public class Shop : MonoBehaviour
             {
                 ItemImgList[i].sprite = Drop.ItemImage;
                 ItemNameList[i].text = Drop.ItemName;
-                ItemPriceList[i].text = Drop.ItemPrice.ToString();
+                ItemPriceList[i].text = "Gold : " + Drop.ItemPrice.ToString();
 
                 ItemButtonList[i].onClick.AddListener(() =>
                 {
-                    // TODO : 한번 구매 했을경우, 다시 구매 못하게 설정하기
                     // 아이템을 살 수 있을 경우
                     if (PlayerComponent.oPlayerCurrentGold >= Drop.ItemPrice)
                     {
@@ -75,6 +85,7 @@ public class Shop : MonoBehaviour
                         PlayerComponent.oPlayerCurrentGold -= Drop.ItemPrice;
                         ItemInfoTable Item = Drop.ItemPrefab.GetComponent<ItemObject>().ItemAdd();
                         Inventory.Instance.AddItem(Item);
+                        ItemButtonList[Index].interactable = false;
                     }
                     else
                     {
@@ -90,7 +101,7 @@ public class Shop : MonoBehaviour
             {
                 ShopItemObjectList[i].SetActive(false);
             }
-        }
+        } 
     }
     #endregion // 함수
 }

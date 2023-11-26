@@ -31,12 +31,6 @@ public class StateBar : MonoBehaviour
         Instance = this;
     }
 
-    /** 초기화 => 상태를 갱신한다 */
-    private void Update()
-    {
-        
-    }
-
     /** 쿨타임을 체크한다 */
     public IEnumerator CheckCoolTime(int SkillNumber, float CoolTime)
     {
@@ -64,7 +58,7 @@ public class StateBar : MonoBehaviour
     /** 상태바 세팅 */
     public void UpdateStateBar(float PlayerMaxHp, float PlayerCurrentHp,
         float PlayerMaxMana, float PlayerCurrentMana, int PlayerCurrentGold,
-        int PlayerLevel, SpriteRenderer PlayerSprite)
+        int PlayerLevel, float PlayerAtk, float PlayerBasicAtkCoolTime, SpriteRenderer PlayerSprite)
     {
         HpBarImg.fillAmount = PlayerCurrentHp / PlayerMaxHp;
         ManaBarImg.fillAmount = PlayerCurrentMana / PlayerMaxMana;
@@ -77,6 +71,9 @@ public class StateBar : MonoBehaviour
         SkillKeyTextList[2].text = string.Empty;
         SkillKeyTextList[3].text = string.Empty;
         SkillKeyTextList[4].text = string.Empty;
+
+        GameManager.Inst.PlayerDataSave(PlayerMaxHp, PlayerAtk, PlayerMaxMana, PlayerCurrentGold,
+            PlayerLevel, PlayerBasicAtkCoolTime);
     }
     #endregion // 함수
 }

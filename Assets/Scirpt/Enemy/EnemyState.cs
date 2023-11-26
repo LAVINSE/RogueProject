@@ -74,23 +74,44 @@ public class EnemyState : MonoBehaviour
     /** 적 대기 */
     public class EnemyStateWait : StateFSM
     {
+        #region 변수
+        private float SkipTime = 0.0f;
+        #endregion // 변수
+
         /** 상태 진입 */
         public override void EnemyStateEnter(EnemyState Enemy)
         {
             Debug.Log("적 대기중");
+            SkipTime = 0.0f;
+            Enemy.oEnemy.oIsEnemyMove = true;
+            Enemy.oEnemy.MoveEnemy();
         }
 
         /** 상태 갱신 */
-        public override void EnemyStateUpdate(EnemyState Enemy, float Time)
+        public override void EnemyStateUpdate(EnemyState Enemy, float UpdateTime)
         {
+            SkipTime += UpdateTime;
+
             // 만약 플레이어가 공격 범위안에 있는지 검사하고, 공격범위라면 공격 상태로
             // 추적 범위안에 플레이어가 있을 경우 추적 상태로 
+            var Distance = Vector2.Distance(Enemy.transform.position, PlayerData.transform.position);
+
+            // 추적가능한 거리일 경우
+            if(Distance <= Enemy.oEnemy.oEnemyTrackingRange)
+            {
+                Enemy.ChangeState(EnemyStateType.Tracking);
+            }
+            // 공격 가능한 거리일 경우
+            else if(Distance <= Enemy.oEnemy.oEnemyAttackRange)
+            {
+                Enemy.ChangeState(EnemyStateType.Attack);
+            }
         }
 
         /** 상태 종료 */
         public override void EnemyStateExit(EnemyState Enemy)
         {
-            
+            Debug.Log("적 대기종료");
         }
     }
 
@@ -100,42 +121,108 @@ public class EnemyState : MonoBehaviour
         /** 상태 진입 */
         public override void EnemyStateEnter(EnemyState Enemy)
         {
-
+            Debug.Log(" 추적 시작 ");
+            Enemy.oEnemy.oIsEnemyMove = false;
         }
 
         /** 상태 갱신 */
         public override void EnemyStateUpdate(EnemyState Enemy, float Time)
         {
-            // 플레이어 추적
-            // 플레이어가 공격 범위안에 들어왔을 경우, 공격 상태로
+            var Distance = Vector2.Distance(Enemy.transform.position, PlayerData.transform.position);
+
+            // 추적 범위가 아닐 경우
+            if(Distance > Enemy.oEnemy.oEnemyTrackingRange)
+            {
+                Enemy.ChangeState(EnemyStateType.Wait);
+            }
+            // 추적 가능한 범위일 경우
+            else
+            {
+                // 공격 범위가 아닐 경우
+                if (Distance > Enemy.oEnemy.oEnemyAttackRange)
+                {
+                    // 공격 위치와, 스프라이트방향을 바꾼다
+                    if(Enemy.transform.position.x > PlayerData.transform.position.x)
+                    {
+                        Enemy.oEnemy.oMeleePos.localPosition = new Vector3(-1.34f, 0f, 0f);
+                        Enemy.oEnemy.EnemyfilpX(false);
+                    }
+                    else
+                    {
+                        Enemy.oEnemy.oMeleePos.localPosition = new Vector3(1.34f, 0f, 0f);
+                        Enemy.oEnemy.EnemyfilpX(true);
+                    }
+
+                    // 플레이어 추적
+                    Enemy.transform.position = Vector2.MoveTowards(Enemy.transform.position,
+                        PlayerData.transform.position, Enemy.oEnemy.oEnemyMoveSpeed * Time);
+
+                    // 추적 애니메이션
+                    Enemy.oEnemy.oEnemyAnimator.SetBool("IsMoving", true);
+                }
+                // 공격 가능한 범위일 경우
+                else if (Distance <= Enemy.oEnemy.oEnemyAttackRange)
+                {
+                    Enemy.ChangeState(EnemyStateType.Attack);
+                }
+            }
         }
 
         /** 상태 종료 */
         public override void EnemyStateExit(EnemyState Enemy)
         {
-
+            // 추적 애니메이션
+            Enemy.oEnemy.oEnemyAnimator.SetBool("IsMoving", false);
         }
     }
 
     /** 적 공격 */
     public class EnemyStateAttack : StateFSM
     {
+        #region 변수
+        private bool IsEnableAttack = false;
+        private float SkipTime = 0.0f;
+        #endregion // 변수
+
         /** 상태 진입 */
         public override void EnemyStateEnter(EnemyState Enemy)
         {
+            Debug.Log(" 공격 시작");
+            Enemy.oEnemy.oIsEnemyMove = false;
+            IsEnableAttack = true;
+            SkipTime = 0.0f;
 
+            // 공격 위치와, 스프라이트방향을 바꾼다
+            if (Enemy.transform.position.x > PlayerData.transform.position.x)
+            {
+                Enemy.oEnemy.oMeleePos.localPosition = new Vector3(-1.34f, 0f, 0f);
+                Enemy.oEnemy.EnemyfilpX(false);
+            }
+            else
+            {
+                Enemy.oEnemy.oMeleePos.localPosition = new Vector3(1.34f, 0f, 0f);
+                Enemy.oEnemy.EnemyfilpX(true);
+            }
         }
 
         /** 상태 갱신 */
         public override void EnemyStateUpdate(EnemyState Enemy, float Time)
         {
+            SkipTime += Time;
 
+            // TODO : 2f >> 쿨타임 변수로 관리하는게 좋아보임
+            if (IsEnableAttack == true && SkipTime >= 2f)
+            {
+                IsEnableAttack = false;
+                Enemy.oEnemy.EnemyBasicAttack();
+                Enemy.ChangeState(EnemyStateType.Wait);
+            }
         }
 
         /** 상태 종료 */
         public override void EnemyStateExit(EnemyState Enemy)
         {
-
+            Debug.Log(" 공격 종료 ");
         }
     }
 
@@ -145,22 +232,21 @@ public class EnemyState : MonoBehaviour
         /** 상태 진입 */
         public override void EnemyStateEnter(EnemyState Enemy)
         {
-
+            Debug.Log(" 피격 시작 ");
         }
 
         /** 상태 갱신 */
         public override void EnemyStateUpdate(EnemyState Enemy, float Time)
         {
-            Debug.Log("적 피격");
+            Debug.Log("적 피격중 ");
+            // 피격 모션 추가
             Enemy.ChangeState(EnemyStateType.Wait);
-
-
         }
 
         /** 상태 종료 */
         public override void EnemyStateExit(EnemyState Enemy)
         {
-
+            Debug.Log(" 피격 종료 ");
         }
     }
 
@@ -170,19 +256,22 @@ public class EnemyState : MonoBehaviour
         /** 상태 진입 */
         public override void EnemyStateEnter(EnemyState Enemy)
         {
-
+            Debug.Log(" 죽음 ");
+            // 죽음 처리
+            PlayerData.oPlayerCurrentGold += Enemy.oEnemy.oEnemyGold;
+            Enemy.oEnemy.EnemyDie();
         }
 
         /** 상태 갱신 */
         public override void EnemyStateUpdate(EnemyState Enemy, float Time)
         {
-            Debug.Log("적 죽음");
+            // DO Somthing
         }
 
         /** 상태 종료 */
         public override void EnemyStateExit(EnemyState Enemy)
         {
-
+            // DO Somthing
         }
     }
     #endregion // 상태 클래스

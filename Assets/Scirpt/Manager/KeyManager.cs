@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 #region 키 종류
@@ -48,6 +49,8 @@ public class KeyManager : CSingleton<KeyManager>
     /** 랜더링 및 GUI 이벤트 처리 */
     private void OnGUI()
     {
+        if(CSceneManager.IsDestroy) return;
+
         // 설정창이 활성화 상태일 경우
         if(CSceneManager.Instance.OptionObj.activeSelf == true)
         {

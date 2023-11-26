@@ -9,6 +9,7 @@ public class CSceneManager : MonoBehaviour
 
     #region 프로퍼티
     public static CSceneManager Instance { get; private set; }
+    public static bool IsDestroy = false;
 
     public GameObject InventoryRoot { get; private set; }
     public GameObject PublicRoot { get; private set; }
@@ -18,14 +19,14 @@ public class CSceneManager : MonoBehaviour
 
     // 아직 사용안함
     public GameObject PlayerObj { get; set; }
-    #endregion // 프로퍼티
+    #endregion // 프로퍼티 
 
     #region 함수 
     /** 초기화 */
     public virtual void Awake()
     {
         Instance = this;
-
+        IsDestroy = false;
         var RootObjs = this.gameObject.scene.GetRootGameObjects();
 
         for(int i =0; i < RootObjs.Length; i++)
@@ -39,12 +40,18 @@ public class CSceneManager : MonoBehaviour
         }
     }
 
+    /** 초기화 => 파괴되었을때 */
+    private void OnDestroy()
+    {
+        IsDestroy = true;
+    }
+
     /** 인벤토리를 생성한다 */
     public Inventory CreateInventroy()
     {
         var Inventory = CFactory.CreateCloneObj<Inventory>("Inventory",
             Resources.Load<GameObject>("Prefabs/UI/Inventory"),
-            InventoryRoot, Vector3.zero, Vector3.one, Vector3.zero);
+            InventoryRoot, Vector3.right * 500.0f, Vector3.one, Vector3.zero);
 
         return Inventory;
     }
@@ -97,7 +104,7 @@ public class CSceneManager : MonoBehaviour
     {
         var ShopObj = CFactory.CreateCloneObj<Shop>("Shop",
             Resources.Load<GameObject>("Prefabs/UI/Shop"), PublicRoot,
-            Vector3.zero, Vector3.one, Vector3.zero);
+            Vector3.left * 560.0f, Vector3.one, Vector3.zero);
 
         ShopObj.gameObject.SetActive(false);
 

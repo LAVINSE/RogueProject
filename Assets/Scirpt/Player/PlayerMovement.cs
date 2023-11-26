@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform MeleePos; // filp에 따라 위치 바꾸기
     [SerializeField] private float JumpSize;
     [SerializeField] private LayerMask JumpLayer;
+    [SerializeField] private LayerMask DownLayer;
 
     [Space]
     [SerializeField] private SpriteRenderer SwordRenderer;
@@ -24,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D Rigid2D;
     private SpriteRenderer SpriteRender;
     private Animator PlayerAnimator;
+    private CapsuleCollider2D PlayerCollider2D;
 
     private int JumtCnt;
     private bool IsGround;
@@ -43,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
         Rigid2D = GetComponentInParent<Rigidbody2D>();
         SpriteRender = GetComponentInParent<SpriteRenderer>();
         PlayerAnimator = GetComponentInParent<Animator>();
+        PlayerCollider2D = GetComponent<CapsuleCollider2D>();
 
         JumtCnt = JumpCount;
     }
@@ -62,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     /** 초기화 => 상태를 갱신한다 */
     private void FixedUpdate()
-    {
+    {   
         // 좌우 이동
         PlayerMove();
     }
@@ -78,28 +81,56 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         IsGround = Physics2D.OverlapCircle(JumpPos.position, JumpSize, JumpLayer);
+        var DownGround = Physics2D.OverlapCircle(JumpPos.position, JumpSize, DownLayer);
 
-        if (IsGround == true && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
+        if (Input.GetKey(KeyCode.DownArrow) == false)
         {
-            Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
-            PlayerAnimator.SetBool("IsJumping", true);
+            if (IsGround == true && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
+            {
+                AudioManager.Inst.PlaySFX(SFXEnum.Jump);
+                Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
+                PlayerAnimator.SetBool("IsJumping", true);
+            }
+
+            if (IsGround == false && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
+            {
+                AudioManager.Inst.PlaySFX(SFXEnum.Jump);
+                Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
+                PlayerAnimator.SetBool("IsJumping", true);
+            }
+
+            if (Input.GetKeyUp(KeySetting.Keys[UserKeyAction.Jump]))
+            {
+                JumtCnt--;
+            }
+
+            if (IsGround == true)
+            {
+                JumtCnt = JumpCount;
+                PlayerAnimator.SetBool("IsJumping", false);
+            }
+
+            if (DownGround == false && IsGround)
+            {
+                PlayerCollider2D.isTrigger = false;
+                PlayerAnimator.SetBool("IsJumping", false);
+            }
         }
-
-        if (IsGround == false && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]) && JumtCnt > 0)
+        else
         {
-            Rigid2D.velocity = new Vector2(0, PlayerJumpPower);
-            PlayerAnimator.SetBool("IsJumping", true);
-        }
+            if (IsGround == true && DownGround == true && Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Jump]))
+            {
+                PlayerCollider2D.isTrigger = true;
+                AudioManager.Inst.PlaySFX(SFXEnum.Jump);
+                Rigid2D.velocity = new Vector2(0, -PlayerJumpPower / 2);
+                PlayerAnimator.SetBool("IsJumping", true);
+            }
 
-        if(Input.GetKeyUp(KeySetting.Keys[UserKeyAction.Jump]))
-        {
-            JumtCnt--;
-        }
-
-        if(IsGround == true)
-        {
-            JumtCnt = JumpCount;
-            PlayerAnimator.SetBool("IsJumping", false);
+            if (DownGround == false && IsGround)
+            {
+                PlayerCollider2D.isTrigger = false;
+                PlayerAnimator.SetBool("IsJumping", false);
+            }
         }
     }
 

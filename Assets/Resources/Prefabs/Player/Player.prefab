@@ -332,7 +332,10 @@ MonoBehaviour:
   JumpSize: 0.34
   JumpLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
+  DownLayer:
+    serializedVersion: 2
+    m_Bits: 1024
   SwordRenderer: {fileID: 805204193634108829}
   WeaponRenderer: {fileID: 3325273118797122278}
 --- !u!1 &3984979260503095612

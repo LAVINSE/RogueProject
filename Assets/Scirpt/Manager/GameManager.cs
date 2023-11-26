@@ -63,11 +63,15 @@ public class GameManager : CSingleton<GameManager>
     }
 
     /** 플레이어 데이터를 저장한다 */
-    public void PlayerDataSave(float PlayerMaxHp, float PlayerAtk, float PlayerBasicAtkCoolTime)
+    public void PlayerDataSave(float PlayerMaxHp, float PlayerAtk,float PlayerMaxMana,
+        int PlayerGold, int PlayerLevel, float PlayerBasicAtkCoolTime)
     {
-        oPlayerAtk = PlayerAtk;
-        oPlayerBasicAtkCoolTime = PlayerBasicAtkCoolTime;
+        oPlayerAtk = PlayerAtk; 
         oPlayerMaxHp = PlayerMaxHp;
+        oPlayerMaxMana = PlayerMaxMana;
+        oPlayerGold = PlayerGold;
+        oPlayerLevel = PlayerLevel;
+        oPlayerBasicAtkCoolTime = PlayerBasicAtkCoolTime;
     }
 
     /** 씬을 변경한다 */

@@ -7,20 +7,16 @@ using UnityEngine;
 /** 배경음 종류 */
 public enum BGMEnum
 {
-    MenuBGM,
-    Battle_BGM_Normal,
-    Battle_BGM_Elite,
-    Battle_BGM_Boss,
+    MainBGM,
+    StageOneBGM,
 }
 
 /** 효과음 종류 */
 public enum SFXEnum
 {
-    OptionButton = 0,
-    LeaveButton,
-    NextBackButton,
-    GameStartButton,
-    GameOver,
+    BasicAttack,
+    Jump,
+    PickItem,
 }
 #endregion // 종류
 
@@ -67,8 +63,12 @@ public class AudioManager : CSingleton<AudioManager>
     /** 초기화 >> 상태를 갱신한다 */
     private void Update()
     {
-        SFXSettingVolume(SFXVolume);
-        BGMSettingVolume(BGMVolume);
+        if(CSceneManager.IsDestroy == true) return;
+        if(CSceneManager.Instance.OptionObj.activeSelf == true)
+        {
+            SFXSettingVolume(SFXVolume);
+            BGMSettingVolume(BGMVolume);
+        }
     }
 
     /** 배경음을 세팅한다 */
@@ -158,10 +158,6 @@ public class AudioManager : CSingleton<AudioManager>
     /** 효과음 볼륨을 세팅한다 */
     public void SFXSettingVolume(float SFXVolume)
     {
-        // TODO : 설정창
-        // TODO : 재생중인 효과음이 없을 경우, 테스트용 효과음 추가하는 변수 만들기
-        // bool을 이용해 true일 경우 재생하고 설정이 다 끝나면 false
-
         for (int i = 0; i < SFXPlayers.Length; i++)
         {
             SFXPlayers[i].volume = SFXVolume;
@@ -171,10 +167,6 @@ public class AudioManager : CSingleton<AudioManager>
     /** 배경음 볼륨을 세팅한다 */
     public void BGMSettingVolume(float BGMVolume)
     {
-        // TODO : 설정창
-        // TODO : 재생중인 효과음이 없을 경우, 테스트용 효과음 추가하는 변수 만들기
-        // bool을 이용해 true일 경우 재생하고 설정이 다 끝나면 false
-
         for (int i = 0; i < BGMPlayers.Length; i++)
         {
             BGMPlayers[i].volume = BGMVolume;

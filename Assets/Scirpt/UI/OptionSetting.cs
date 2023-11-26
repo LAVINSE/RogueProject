@@ -9,6 +9,8 @@ public class OptionSetting : MonoBehaviour
     #region 변수
     [SerializeField] private Button[] ButtonArray;
     [SerializeField] private TMP_Text[] TextArray;
+    [SerializeField] private Slider BGMSlider;
+    [SerializeField] private Slider SFXSlider;
     #endregion // 변수
 
     #region 함수
@@ -20,6 +22,8 @@ public class OptionSetting : MonoBehaviour
             int Index = i;
             ButtonArray[i].onClick.AddListener(() => KeyManager.Inst.ChangeKey(Index));
         }
+
+        InitSlider();
     }
 
     /** 초기화 */
@@ -39,6 +43,21 @@ public class OptionSetting : MonoBehaviour
         {
             TextArray[i].text = KeySetting.Keys[(UserKeyAction)i].ToString();
         }
+    }
+
+    private void InitSlider()
+    {
+        BGMSlider.value = AudioManager.Inst.oBGMVolume;
+        SFXSlider.value = AudioManager.Inst.oSFXVolume;
+
+        BGMSlider.onValueChanged.AddListener((Volume) =>
+        {
+            AudioManager.Inst.oBGMVolume = Volume;
+        });
+        SFXSlider.onValueChanged.AddListener((Volume) =>
+        {
+            AudioManager.Inst.oSFXVolume = Volume;
+        });
     }
     #endregion // 함수
 }

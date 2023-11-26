@@ -16,12 +16,12 @@ public class NPC : MonoBehaviour
     [Header("=====> NPC 설정 <=====")]
     [SerializeField] private NPCType Type = NPCType.None;
     [Tooltip(" 상점 NPC만 사용함 ")][SerializeField] private WeightDropTable ItemTable = null;
+    [Tooltip(" 스테이지 NPC만 사용함 ")][SerializeField] private string SceneName;
 
     [Header("=====> 패널 설정 <=====")]
     [SerializeField] private GameObject InteractionPanel = null;
     [SerializeField] private TMP_Text InteractionText = null;
     
-
     private Player PlayerData;
     private GameObject ShopObj;
     private GameObject DungeonPopupObj;
@@ -74,7 +74,8 @@ public class NPC : MonoBehaviour
     /** 상호작용 패널을 설정한다 */
     private void ShowInteractionPanel()
     {
-        if(InteractionPanel.activeSelf == false)
+        InteractionText.text = $"상호작용\n{KeySetting.Keys[UserKeyAction.Interaction]}";
+        if (InteractionPanel.activeSelf == false)
         {
             InteractionPanel.SetActive(true);
         }
@@ -141,6 +142,7 @@ public class NPC : MonoBehaviour
         if(PopupComponent == null)
         {
             DungeonPopupObj = CSceneManager.Instance.CreateDungeonPopup().gameObject;
+            DungeonPopupObj.GetComponent<DungeonPopup>().SettingSceneName(SceneName);
             DungeonPopupObj.SetActive(true);
         }
         else

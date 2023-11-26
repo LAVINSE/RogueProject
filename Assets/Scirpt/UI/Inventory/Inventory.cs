@@ -237,13 +237,16 @@ public class Inventory : MonoBehaviour
     {
         ItemSlot EndDragSlot = RaycastAndGetFirstComponent<ItemSlot>();
 
+        // 드래그가 끝난시점에 슬롯이 있을 경우
         if(EndDragSlot != null)
         {
+            // 처음 시작한 슬롯과, 마지막 슬롯이 같을 경우
             if(BeginDragSlot == EndDragSlot)
             {
                 return;
             }
 
+            // 슬롯에 있는 아이템을 옮긴다
             BeginDragSlot.Swap(EndDragSlot);
         }
     }

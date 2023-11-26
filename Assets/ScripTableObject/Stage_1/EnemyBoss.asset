@@ -16,3 +16,6 @@ MonoBehaviour:
   oEnemyType: 3
   EnemyHp: 30
   EnemyAtk: 3
+  EnemyMoveSpeed: 1
+  EnemyTrackingRange: 0
+  EnemyAttackRange: 0

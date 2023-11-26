@@ -218,6 +218,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 1
+  ItemTable: {fileID: 0}
+  SceneName: 
   InteractionPanel: {fileID: 4182025083669222936}
   InteractionText: {fileID: 4182025085594299991}
 --- !u!1 &4182025085594299989

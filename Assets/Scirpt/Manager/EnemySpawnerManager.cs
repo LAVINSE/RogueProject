@@ -18,11 +18,29 @@ public class EnemySpawnerManager : MonoBehaviour
 
     [Header("=====> 인스펙터 제어 변수 <=====")]
     [SerializeField] private bool IsStart = false; // 스테이지 입장 했는지 확인하는 변수
-    [SerializeField] public bool IsEnemyAllKill = false;
+    [SerializeField] private bool IsEnemyAllKill = false;
+    [SerializeField] private List<EnemySetting> EnemyList = new List<EnemySetting>();
+    [SerializeField] public int ClearCount = 1;
     #endregion // 변수
 
     #region 프로퍼티
     public static EnemySpawnerManager Instance { get; private set; }
+
+    public bool oIsStart
+    {
+        get => IsStart;
+        set => IsStart = value;
+    }
+    public List<EnemySetting> oEnemyList
+    {
+        get => EnemyList;
+        set => EnemyList = value;
+    }
+    public bool oIsEnemyAllKill
+    {
+        get => IsEnemyAllKill;
+        set => IsEnemyAllKill = value;
+    }
     #endregion // 프로퍼티
 
     #region 함수
@@ -30,45 +48,20 @@ public class EnemySpawnerManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        EnterplayerSpawnEnemy();
     }
 
     /** 초기화 => 상태를 갱신한다 */
     private void Update()
     {
-        EnterplayerSpawnEnemy();
+        StageClear();
     }
 
-    /** 스테이지에 플레이어가 입장했을 경우 */
-    private void EnterplayerSpawnEnemy()
+    private void StageClear()
     {
-        // 스테이지에 입장 했을 경우
-        if (IsStart == true)
+        if(ClearCount != 0)
         {
-            for (int i = 0; i < EnemySpawnNormalPoint.Count; i++)
-            {
-                SpawnEnemy(EnemyTableList, EnemySpawnNormalPoint, EnemyRoot, EnemyType.Normal);
-            }
-            IsStart = false;
-        }
-    }
-
-    /** 적을 소환한다 */
-    public void SpawnEnemy(List<EnemyTable> EnemyTableList, List<Transform> EnemySpawnPoint,
-        GameObject EnemyRoot, EnemyTable.EnemyType EnemyType)
-    {
-        var EnemyObject = EnemyObjectPool(EnemySelect(EnemyTableList, EnemyType), EnemyRoot);
-        var Enemy = EnemyObject.GetComponent<EnemySetting>();
-        Enemy.EnemyInfoSetting(EnemySelect(EnemyTableList, EnemyType));
-
-        for(int i = 0; i< EnemySpawnPoint.Count; i++)
-        {
-            // EnemySpawnPonint가 활성화 상태일때
-            if (EnemySpawnPoint[i].gameObject.activeSelf)
-            {
-                EnemyObject.transform.position = EnemySpawnPoint[i].transform.position;
-                EnemySpawnPoint[i].gameObject.SetActive(false);
-                break;
-            }
+            ClearCount = EnemyList.Count;
         }
     }
 
@@ -98,6 +91,52 @@ public class EnemySpawnerManager : MonoBehaviour
 
         Enemy.SetActive(true);
         return Enemy.GetComponent<EnemySetting>();
+    }
+
+    /** 적을 소환한다 */
+    public void SpawnEnemy(List<EnemyTable> EnemyTableList, List<Transform> EnemySpawnPoint,
+        GameObject EnemyRoot, EnemyTable.EnemyType EnemyType)
+    {
+        var EnemyObject = EnemyObjectPool(EnemySelect(EnemyTableList, EnemyType), EnemyRoot);
+        var Enemy = EnemyObject.GetComponent<EnemySetting>();
+        Enemy.EnemyInfoSetting(EnemySelect(EnemyTableList, EnemyType));
+
+        for (int i = 0; i < EnemySpawnPoint.Count; i++)
+        {
+            // EnemySpawnPonint가 활성화 상태일때
+            if (EnemySpawnPoint[i].gameObject.activeSelf)
+            {
+                EnemyObject.transform.position = EnemySpawnPoint[i].transform.position;
+                EnemySpawnPoint[i].gameObject.SetActive(false);
+                break;
+            }
+        }
+
+        EnemyList.Add(EnemyObject);
+    }
+
+    /** 스테이지에 플레이어가 입장했을 경우 */
+    public void EnterplayerSpawnEnemy()
+    {
+        // 스테이지에 입장 했을 경우
+        if (IsStart == true)
+        {
+            for (int i = 0; i < EnemySpawnNormalPoint.Count; i++)
+            {
+                SpawnEnemy(EnemyTableList, EnemySpawnNormalPoint, EnemyRoot, EnemyType.Normal);
+            }
+            for (int i = 0; i < EnemySpawnElitePoint.Count; i++)
+            {
+                if (EnemySpawnElitePoint == null) return;
+                SpawnEnemy(EnemyTableList, EnemySpawnElitePoint, EnemyRoot, EnemyType.Elite);
+            }
+            for (int i = 0; i < EnemySpawnBossPoint.Count; i++)
+            {
+                if (EnemySpawnBossPoint == null) return;
+                SpawnEnemy(EnemyTableList, EnemySpawnBossPoint, EnemyRoot, EnemyType.Boss);
+            }
+            IsStart = false;
+        }
     }
     #endregion // 함수
 }
