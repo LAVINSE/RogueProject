@@ -16,7 +16,9 @@ MonoBehaviour:
   DropTableList:
   - ItemTable: {fileID: 11400000, guid: 0649c4e98e9520f4c972af26c93b2ea4, type: 2}
     Weight: 5
+  - ItemTable: {fileID: 11400000, guid: b03fdaae9db21b441b1ce4a90efb1a7d, type: 2}
+    Weight: 5
   - ItemTable: {fileID: 11400000, guid: a121165c8db80644881337a79da39463, type: 2}
     Weight: 5
   - ItemTable: {fileID: 0}
-    Weight: 90
+    Weight: 85

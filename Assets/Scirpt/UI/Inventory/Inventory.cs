@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class Inventory : MonoBehaviour
 {
@@ -12,15 +15,35 @@ public class Inventory : MonoBehaviour
 
     [Header("=====> 인벤토리 슬롯 설정 <=====")]
     [Range(0, 10)][SerializeField] private int VerticalSlotCount = 0; // 세로 길이 설정
+    [SerializeField] private int HorizontalSlotCount = 5;
+    [SerializeField] private float ContentHeight = 150f;
 
     [Header("=====> 슬롯 설정 <=====")]
     [SerializeField] private GameObject SlotPrefab;
     [SerializeField] private RectTransform SlotRectTransform;
 
+    [Header("=====> 인벤토리 UI 설정 <=====")]
+    [SerializeField] private GameObject PopupPanel;
+    [SerializeField] private Button InventoryCancelButton;
+
+    [Header("=====> 인벤토리 PopupUse 설정 <=====")]
+    [SerializeField] private GameObject UsePanel;
+    [SerializeField] private TMP_Text UseItemNameText;
+    [SerializeField] private TMP_Text UseInfoText;
+    [SerializeField] private Button UseOkButton;
+    [SerializeField] private Button UseCancelButton;
+
+    [Header("=====> 인벤토리 PopupAbandon 설정 <=====")]
+    [SerializeField] private GameObject AbandonPanel;
+    [SerializeField] private TMP_Text AbandonItemNameText;
+    [SerializeField] private TMP_Text AbandonInfoText;
+    [SerializeField] private Button AbandonOkButton;
+    [SerializeField] private Button AbandonCancelButton;
+
     [Header("=====> 인스펙터 확인용 <=====")]
     [SerializeField] private ItemSlot[] Slots;
-    [SerializeField] private int HorizontalSlotCount = 5;
     [SerializeField] private GameObject Content;
+    [SerializeField] private ScrollRect Scroll;
 
     private GridLayoutGroup InventoryContentGridLayoutGroup;
     private PointerEventData PointerEvent;
@@ -31,6 +54,11 @@ public class Inventory : MonoBehaviour
     private List<RaycastResult> RayResult;
     private GraphicRaycaster GraphicRay;
     private int DragSlotSiblingIndex;
+    
+
+    // 내부에서 사용
+    private event Action PopupUseOkCallback;
+    private event Action PopupAbandonOkCallback;
     #endregion // 변수
 
     #region 프로퍼티
@@ -40,6 +68,8 @@ public class Inventory : MonoBehaviour
         get => ItemList;
         set => ItemList = value;
     }
+
+    public bool IsShowInven = false;
     #endregion // 프로퍼티
 
     #region 함수
@@ -55,6 +85,8 @@ public class Inventory : MonoBehaviour
         }
         PointerEvent = new PointerEventData(EventSystem.current);
         RayResult = new List<RaycastResult>(10);
+
+        SettingButton();
 
         // 가로 길이 설정
         InventoryContentGridLayoutGroup = GetComponentInChildren<GridLayoutGroup>();
@@ -81,6 +113,62 @@ public class Inventory : MonoBehaviour
         OnPointerUp();
     }
 
+    /** 버튼을 설정한다 */
+    private void SettingButton()
+    {
+        InventoryCancelButton.onClick.AddListener(() =>
+        {
+            IsShowInven = false;
+            this.gameObject.SetActive(false);
+        });
+
+        UseOkButton.onClick.AddListener(() =>
+        {
+            PopupUseOkCallback?.Invoke();
+            PopupPanel.SetActive(false);
+            UsePanel.SetActive(false);
+        });
+        UseCancelButton.onClick.AddListener(() =>
+        {
+            PopupPanel.SetActive(false);
+            UsePanel.SetActive(false);
+        });
+
+        AbandonOkButton.onClick.AddListener(() =>
+        {
+            PopupAbandonOkCallback?.Invoke();
+            PopupPanel.SetActive(false);
+            AbandonPanel.SetActive(false);
+        });
+        AbandonCancelButton.onClick.AddListener(() =>
+        {
+            PopupPanel.SetActive(false);
+            AbandonPanel.SetActive(false);
+        });
+    }
+
+    /** 슬롯을 설정한다 */
+    private void SettingSlot()
+    {
+        int SlotCount = 0;
+
+        for (int i = 0; i < VerticalSlotCount; i++)
+        {
+            for (int j = 0; j < HorizontalSlotCount; j++)
+            {
+                SlotCount = (HorizontalSlotCount * i) + j;
+
+
+                var Slot = CreateSlot();
+                Slot.gameObject.SetActive(true);
+                Slot.gameObject.name = $"ItemSlot {SlotCount}";
+            }
+        }
+
+        ContentHeight += ((SlotCount + 1) / HorizontalSlotCount) * 100;
+        Scroll.content.sizeDelta = new Vector2(0, ContentHeight);
+    }
+
     /** 슬롯을 업데이트 한다 */
     public void UpdateSlot()
     {
@@ -100,23 +188,6 @@ public class Inventory : MonoBehaviour
 
         // 데이터 저장
         GameManager.Inst.oPlayerItemList = oItemList;
-    }
-
-    /** 슬롯을 설정한다 */
-    private void SettingSlot()
-    {
-        for (int i = 0; i < VerticalSlotCount; i++)
-        {
-            for (int j = 0; j < HorizontalSlotCount; j++)
-            {
-                int SlotCount = (HorizontalSlotCount * i) + j;
-
-
-                var Slot = CreateSlot();
-                Slot.gameObject.SetActive(true);
-                Slot.gameObject.name = $"ItemSlot {SlotCount}";
-            }
-        }
     }
 
     /** 슬롯을 생성한다 */
@@ -176,6 +247,9 @@ public class Inventory : MonoBehaviour
             // 현재 드래그 시작한 슬롯이 존재하고, 아이템이 있을 경우
             if (BeginDragSlot != null && BeginDragSlot.HasItem)
             {
+                // 스크롤 막기
+                Scroll.vertical = false;
+
                 BeginDragIconTransform = BeginDragSlot.oItemIconImgRect;
                 BeginDragIconPoint = BeginDragIconTransform.position;
                 BeginDragCursorPoint = Input.mousePosition;
@@ -187,6 +261,28 @@ public class Inventory : MonoBehaviour
             else
             {
                 BeginDragSlot = null;
+            }
+        }
+        // 오른쪽 클릭을 누르는 순간, 왼쪽 컨트롤을 안눌렀을때
+        else if(Input.GetMouseButtonDown(1) && !Input.GetKey(KeyCode.LeftControl))
+        {
+            ItemSlot Slot = RaycastAndGetFirstComponent<ItemSlot>();
+
+            if (Slot != null && Slot.HasItem)
+            {
+                // 아이템 사용 
+                InventoryUseItem(() => Slot.UseItem(), Slot);
+            }
+        }
+        // 왼쪽 컨트롤과, 오른쪽 클릭을 눌렀을 경우
+        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetMouseButtonDown(1))
+        {
+            ItemSlot Slot = RaycastAndGetFirstComponent<ItemSlot>();
+
+            if (Slot != null && Slot.HasItem)
+            {
+                // 아이템 버리기
+                InventoryAbandonItem(() => Slot.AbandonItem(), Slot);
             }
         }
     }
@@ -229,10 +325,14 @@ public class Inventory : MonoBehaviour
 
                 BeginDragSlot = null;
                 BeginDragIconTransform = null;
+
+                // 스크롤 허용
+                Scroll.vertical = true;
             }
         }
     }
 
+    /** 드래그를 종료한다 */
     private void EndDrag()
     {
         ItemSlot EndDragSlot = RaycastAndGetFirstComponent<ItemSlot>();
@@ -247,9 +347,28 @@ public class Inventory : MonoBehaviour
             }
 
             // 슬롯에 있는 아이템을 옮긴다
-            BeginDragSlot.Swap(EndDragSlot);
+            BeginDragSlot.SlotSwap(EndDragSlot);
         }
     }
 
+    /** 인벤토리에서 아이템을 사용하는 팝업, 콜백 설정 */
+    private void InventoryUseItem(Action Callback, ItemSlot Slot)
+    {
+        PopupPanel.SetActive(true);
+        UsePanel.SetActive(true);
+        UseItemNameText.text = Slot.oItemInfo.ItemName;
+        UseInfoText.text = "사용하시겠습니까?";
+        PopupUseOkCallback = Callback;
+    }
+
+    /** 인벤토리에서 아이템을 버리는 팝업, 콜백 설정 */
+    private void InventoryAbandonItem(Action Callback, ItemSlot Slot)
+    {
+        PopupPanel.SetActive(true);
+        AbandonPanel.SetActive(true);
+        AbandonItemNameText.text = Slot.oItemInfo.ItemName;
+        AbandonInfoText.text = "버리시겠습니까?";
+        PopupAbandonOkCallback = Callback;
+    }
     #endregion // 함수
 }

@@ -75,8 +75,6 @@ public class EnemySetting : MonoBehaviour
         get => EnemyGold;
         set => EnemyGold = value;
     }
-
-    public bool oIsEnemyMove { get; set; } = true;
     #endregion // 프로퍼티
 
     #region 함수
@@ -101,7 +99,7 @@ public class EnemySetting : MonoBehaviour
         Rigid2D = GetComponent<Rigidbody2D>();
 
         // 적 좌우 자유 이동
-        Invoke("MoveEnemy", 3);
+        MoveEnemy();
     }
 
     /** 초기화 => 상태를 갱신한다 */
@@ -161,15 +159,18 @@ public class EnemySetting : MonoBehaviour
         // 적이 죽지 않았을 경우
         if (EnemyIsDie() == false)
         {
+            AudioManager.Inst.PlaySFX(SFXEnum.Hit);
             EnemyHp -= Damage;
 
             // 적이 죽었을 경우
             if(EnemyIsDie() == true)
             {
+                AudioManager.Inst.PlaySFX(SFXEnum.Dead);
                 oEnemyState.ChangeState(EnemyState.EnemyStateType.Dead);
             }
             else
             {
+                StartCoroutine(HitEnemy());
                 oEnemyState.ChangeState(EnemyState.EnemyStateType.Hit);
             }
         }
@@ -195,8 +196,6 @@ public class EnemySetting : MonoBehaviour
     /** 적이 좌우로 돌아다닌다 */
     public void MoveEnemy()
     {
-        if (oIsEnemyMove == false) return;
-
         NextMove = Random.Range(-1, 2);
 
         if (NextMove == -1)
@@ -208,7 +207,7 @@ public class EnemySetting : MonoBehaviour
             EnemyfilpX(true);
         }
 
-        Invoke("MoveEnemy", 3);
+        Invoke("MoveEnemy", 1.5f);
     }
 
     /** 적이 죽었을 때 */
@@ -229,9 +228,27 @@ public class EnemySetting : MonoBehaviour
     }
 
     /** 적이 죽었는지 검사한다 */
-    public bool EnemyIsDie()
+    private bool EnemyIsDie()
     {
         return this.EnemyHp <= 0.0f;
+    }
+
+    /** 적 피격 효과 */
+    private IEnumerator HitEnemy()
+    {
+        Mount.color = Color.red;
+        Body.color = Color.red;
+        WingLeft.color = Color.red;
+        WingRight.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+
+        if(EnemyIsDie() == false)
+        {
+            Mount.color = new Color(1, 1, 1);
+            Body.color = new Color(1, 1, 1);
+            WingLeft.color = new Color(1, 1, 1);
+            WingRight.color = new Color(1, 1, 1);
+        }
     }
     #endregion // 함수
 }

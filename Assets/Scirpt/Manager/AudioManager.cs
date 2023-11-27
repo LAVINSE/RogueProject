@@ -17,6 +17,8 @@ public enum SFXEnum
     BasicAttack,
     Jump,
     PickItem,
+    Dead,
+    Hit
 }
 #endregion // 종류
 

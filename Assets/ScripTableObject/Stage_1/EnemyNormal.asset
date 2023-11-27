@@ -18,5 +18,5 @@ MonoBehaviour:
   EnemyAtk: 2
   EnemyGold: 2
   EnemyMoveSpeed: 1
-  EnemyTrackingRange: 3
-  EnemyAttackRange: 2
+  EnemyTrackingRange: 3.5
+  EnemyAttackRange: 2.5

@@ -71,9 +71,6 @@ public class StateBar : MonoBehaviour
         SkillKeyTextList[2].text = string.Empty;
         SkillKeyTextList[3].text = string.Empty;
         SkillKeyTextList[4].text = string.Empty;
-
-        GameManager.Inst.PlayerDataSave(PlayerMaxHp, PlayerAtk, PlayerMaxMana, PlayerCurrentGold,
-            PlayerLevel, PlayerBasicAtkCoolTime);
     }
     #endregion // 함수
 }

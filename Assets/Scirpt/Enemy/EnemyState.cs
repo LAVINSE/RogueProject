@@ -83,8 +83,6 @@ public class EnemyState : MonoBehaviour
         {
             Debug.Log("적 대기중");
             SkipTime = 0.0f;
-            Enemy.oEnemy.oIsEnemyMove = true;
-            Enemy.oEnemy.MoveEnemy();
         }
 
         /** 상태 갱신 */
@@ -122,7 +120,6 @@ public class EnemyState : MonoBehaviour
         public override void EnemyStateEnter(EnemyState Enemy)
         {
             Debug.Log(" 추적 시작 ");
-            Enemy.oEnemy.oIsEnemyMove = false;
         }
 
         /** 상태 갱신 */
@@ -188,7 +185,6 @@ public class EnemyState : MonoBehaviour
         public override void EnemyStateEnter(EnemyState Enemy)
         {
             Debug.Log(" 공격 시작");
-            Enemy.oEnemy.oIsEnemyMove = false;
             IsEnableAttack = true;
             SkipTime = 0.0f;
 
@@ -210,8 +206,8 @@ public class EnemyState : MonoBehaviour
         {
             SkipTime += Time;
 
-            // TODO : 2f >> 쿨타임 변수로 관리하는게 좋아보임
-            if (IsEnableAttack == true && SkipTime >= 2f)
+            // TODO : 1.5f >> 쿨타임 변수로 관리하는게 좋아보임
+            if (IsEnableAttack == true && SkipTime >= 1.5f)
             {
                 IsEnableAttack = false;
                 Enemy.oEnemy.EnemyBasicAttack();
@@ -239,7 +235,6 @@ public class EnemyState : MonoBehaviour
         public override void EnemyStateUpdate(EnemyState Enemy, float Time)
         {
             Debug.Log("적 피격중 ");
-            // 피격 모션 추가
             Enemy.ChangeState(EnemyStateType.Wait);
         }
 

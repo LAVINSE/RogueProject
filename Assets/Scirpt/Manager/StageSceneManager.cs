@@ -9,8 +9,6 @@ public class StageSceneManager : CSceneManager
     [SerializeField] private GameObject PlayerSpawnPoint = null;
     [SerializeField] private TilemapRenderer OutLineTileMap = null;
 
-    private bool IsShowInven = false;
-
     private Inventory PlayerInven;
 
     private GameObject InventoryObj;
@@ -88,14 +86,15 @@ public class StageSceneManager : CSceneManager
     private void ShowInven()
     {
         // I 키를 눌렀을 경우
-        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Inventory]) && CSceneManager.Instance.OptionObj.activeSelf == false)
+        if (Input.GetKeyDown(KeySetting.Keys[UserKeyAction.Inventory]) &&
+            CSceneManager.Instance.OptionObj.activeSelf == false)
         {
             // 인벤토리 슬롯 업데이트
             PlayerInven.UpdateSlot();
 
             // 활성화, 비활성화
-            IsShowInven = !IsShowInven;
-            this.InventoryObj.SetActive(IsShowInven);
+            PlayerInven.GetComponent<Inventory>().IsShowInven = !PlayerInven.GetComponent<Inventory>().IsShowInven;
+            this.InventoryObj.SetActive(PlayerInven.GetComponent<Inventory>().IsShowInven);
         }
     }
 }

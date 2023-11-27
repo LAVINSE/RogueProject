@@ -34,7 +34,7 @@ public class ItemSlot : MonoBehaviour
         }
     }
 
-    public bool HasItem => ItemIconImg != null;
+    public bool HasItem => oItemInfo != null;
     public RectTransform oItemIconImgRect => ItemIconImgRect;
     #endregion // 프로퍼티
 
@@ -45,8 +45,8 @@ public class ItemSlot : MonoBehaviour
         ItemIconImgRect = ItemIconImg.rectTransform;
     }
 
-    /** 교환 */
-    public void Swap(ItemSlot OtherSlot)
+    /** 슬롯 교환 */
+    public void SlotSwap(ItemSlot OtherSlot)
     {
         if (OtherSlot == null) return;
         if (OtherSlot == this) return;
@@ -55,6 +55,23 @@ public class ItemSlot : MonoBehaviour
 
         this.oItemInfo = null;
         this.ItemIconImg.sprite = null;
+    }
+
+    /** 아이템 사용 */
+    public void UseItem()
+    {
+        if (oItemInfo == null) return;
+        
+        this.oItemInfo.UseItem();
+        this.oItemInfo = null;
+    }
+
+    /** 아이템 버리기 */
+    public void AbandonItem()
+    {
+        if(oItemInfo == null) return;
+
+        this.oItemInfo = null;
     }
     #endregion // 함수
 }

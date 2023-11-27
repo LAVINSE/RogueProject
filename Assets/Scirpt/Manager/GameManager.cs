@@ -1,23 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class GameManager : CSingleton<GameManager>
 {
     #region 변수
-    [SerializeField] private float PlayerMaxHp = 0f;
-    [SerializeField] private float PlayerMaxMana = 0f;
-    [SerializeField] private float PlayerAtk = 0f;
-    [SerializeField] private int PlayerGold = 0;
+    [SerializeField] private float PlayerMaxHp = 20f;
+    [SerializeField] private float PlayerMaxMana = 20f;
+    [SerializeField] private float PlayerAtk = 5f;
+    [SerializeField] private int PlayerGold = 10;
     [SerializeField] private int PlayerLevel = 0;
-    [SerializeField] private float PlayerBasicAtkCoolTime = 0f;
+    [SerializeField] private float PlayerBasicAtkCoolTime = 2f;
+
     #endregion // 변수
 
     #region 프로퍼티
     public ObjectPoolManager oPoolManager { get; private set; }
     public List<ItemInfoTable> oPlayerItemList = new List<ItemInfoTable>();
-
-    public bool IsBasicAttack { get; set; } = true;
 
     public int oPlayerGold
     {
@@ -28,7 +28,7 @@ public class GameManager : CSingleton<GameManager>
     public int oPlayerLevel
     {
         get => PlayerLevel;
-        set => PlayerLevel = Mathf.Max(0,value);
+        set => PlayerLevel = Mathf.Max(0, value);
     }
     public float oPlayerMaxMana
     {
@@ -36,7 +36,7 @@ public class GameManager : CSingleton<GameManager>
         set => PlayerMaxMana = Mathf.Max(0, value);
     }
     public float oPlayerMaxHp
-    { 
+    {
         get => PlayerMaxHp;
         set => PlayerMaxHp = Mathf.Max(0, value);
     }
@@ -51,6 +51,7 @@ public class GameManager : CSingleton<GameManager>
         get => PlayerBasicAtkCoolTime;
         set => PlayerBasicAtkCoolTime = Mathf.Max(0, value);
     }
+    public bool IsBasicAttack { get; set; } = true;
     #endregion // 프로퍼티
 
     #region 함수
@@ -60,23 +61,13 @@ public class GameManager : CSingleton<GameManager>
         base.Awake();
         oPoolManager = CFactory.CreateObject<ObjectPoolManager>("ObjectPoolManager", this.gameObject,
             Vector3.zero, Vector3.one, Vector3.zero);
-    }
 
-    /** 플레이어 데이터를 저장한다 */
-    public void PlayerDataSave(float PlayerMaxHp, float PlayerAtk,float PlayerMaxMana,
-        int PlayerGold, int PlayerLevel, float PlayerBasicAtkCoolTime)
-    {
-        oPlayerAtk = PlayerAtk; 
-        oPlayerMaxHp = PlayerMaxHp;
-        oPlayerMaxMana = PlayerMaxMana;
-        oPlayerGold = PlayerGold;
-        oPlayerLevel = PlayerLevel;
-        oPlayerBasicAtkCoolTime = PlayerBasicAtkCoolTime;
     }
 
     /** 씬을 변경한다 */
     public void ChangeScene(string SceneName)
     {
+        DataManager.Inst.JsonSave();
         LoadingScene.LoadScene(SceneName);
     }
     #endregion // 함수

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -28,6 +29,11 @@ public class Player : MonoBehaviour
 
     #region 프로퍼티 
     public int oPlayerCurrentGold { get; set; }
+    public float oPlayerCurrentHp
+    {
+        get => PlayerCurrentHp;
+        set => PlayerCurrentHp = value;
+    }
     public NPC oNPC { get; set; }
     #endregion // 프로퍼티
 
@@ -161,7 +167,47 @@ public class Player : MonoBehaviour
     /** 타격을 받는다 */
     public void TakeDamage(float Damage)
     {
-        PlayerCurrentHp -= Damage;
+        /** 플레이어가 죽지 않았을 경우 */
+        if(PlayerIsDie() == false)
+        {
+            AudioManager.Inst.PlaySFX(SFXEnum.Hit);
+            PlayerCurrentHp -= Damage;
+
+            // 피격 효과
+            StartCoroutine(HitPlayer());
+
+            if (PlayerIsDie() == true)
+            {
+
+                AudioManager.Inst.PlaySFX(SFXEnum.Dead);
+                // 씬 돌아가는 메뉴 나오게 설정
+                Invoke("PlayerDieChangeScene", 2);
+                this.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    /** 플레이어 피격 효과 */
+    private IEnumerator HitPlayer()
+    {
+        PlayerSprite.color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+
+        if(PlayerIsDie() == false)
+        {
+            PlayerSprite.color = new Color(1, 1, 1);
+        }
+    }
+
+    /** 플레이어가 죽었는지 검사한다 */
+    public bool PlayerIsDie()
+    {
+        return PlayerCurrentHp <= 0;
+    }
+
+    private void PlayerDieChangeScene()
+    {
+        GameManager.Inst.ChangeScene("Main");
     }
     #endregion // 함수
 }

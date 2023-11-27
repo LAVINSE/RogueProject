@@ -26,11 +26,6 @@ public class EnemySpawnerManager : MonoBehaviour
     #region 프로퍼티
     public static EnemySpawnerManager Instance { get; private set; }
 
-    public bool oIsStart
-    {
-        get => IsStart;
-        set => IsStart = value;
-    }
     public List<EnemySetting> oEnemyList
     {
         get => EnemyList;
@@ -47,7 +42,14 @@ public class EnemySpawnerManager : MonoBehaviour
     /** 초기화 */
     private void Awake()
     {
-        Instance = this;
+        Instance = this; 
+        IsStart = true;
+    }
+
+    /** 초기화 */
+    private void Start()
+    {
+        ClearCount = 1;
         EnterplayerSpawnEnemy();
     }
 

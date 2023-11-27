@@ -23,6 +23,7 @@ public class Shop : MonoBehaviour
     [SerializeField] private WeightDropTable DropTable;
 
     private Player PlayerComponent;
+    private List<ItemInfoTable> DropList = new List<ItemInfoTable>();
     #endregion // 변수
 
     #region 프로퍼티
@@ -62,6 +63,7 @@ public class Shop : MonoBehaviour
     /** 상점을 세팅한다 */
     public void SettingShop(WeightDropTable ItemTable)
     {
+        DropList.Clear();
         DropTable = ItemTable;
 
         for (int i = 0; i< ItemImgList.Count; i++)
@@ -69,9 +71,11 @@ public class Shop : MonoBehaviour
             int Index = i;
             var Drop = DropTable.ItemDrop();
 
-            // 드랍 아이템이 있을 경우
-            if(Drop != null)
+            // 드랍 아이템이 있을 경우, 중복 검사
+            if (Drop != null && DropList.Contains(Drop) == false)
             {
+                DropList.Add(Drop);
+
                 ItemImgList[i].sprite = Drop.ItemImage;
                 ItemNameList[i].text = Drop.ItemName;
                 ItemPriceList[i].text = "Gold : " + Drop.ItemPrice.ToString();
